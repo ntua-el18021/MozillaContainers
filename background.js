@@ -1,7 +1,17 @@
-let containerHistories = {};
-
 // Set the extension icon
 browser.action.setIcon({ path: "icons/history-mod.png" });
+
+browser.commands.onCommand.addListener((command) => {
+    if (command === "open_history") {
+        browser.windows.create({
+            url: browser.runtime.getURL('history.html'),
+            type: "popup",
+            height: 400,
+            width: 600
+        });
+    }
+});
+
 
 // Create a new container.
 async function createContainer(name, password) {
@@ -14,8 +24,10 @@ async function createContainer(name, password) {
         let containerData = {};
         containerData[context.cookieStoreId] = {
             profileName: name,
-            password: password
+            password: password,
+            cookieStoreId: context.cookieStoreId
         };
+
         await browser.storage.local.set(containerData);
         return true; // Successfully created container and saved to storage
     } catch (error) {
@@ -27,13 +39,13 @@ async function createContainer(name, password) {
 // Handle messages from popup.js
 browser.runtime.onMessage.addListener(async (message, sender, sendResponse) => {
     if (message.command === "createContainer") {
-        const success = await createContainer(message.name, message.password);
-        if (success) {
-            sendResponse({ success: true }); // Send success response to popup
-        } else {
-            sendResponse({ success: false }); // Send failure response to popup
+        try {
+            await createContainer(message.name, message.password);
+            sendResponse({ success: true });
+        } catch (error) {
+            sendResponse({ success: false, error: error.message });
         }
     }
-    // Need to return true for asynchronous sendResponse usage
     return true; 
 });
+

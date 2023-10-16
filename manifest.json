@@ -8,8 +8,9 @@
     "storage",
     "tabs",
     "contextualIdentities",
-    "webNavigation"
-  ],
+    "activeTab"
+],
+
   "action": {
     "default_popup": "popup.html",
     "default_icon": {
@@ -25,5 +26,21 @@
   },
   "background": {
     "scripts": ["background.js"]
+  },
+  "commands": {
+    "open_history": {
+        "suggested_key": {
+            "default": "Ctrl+Shift+U"
+        },
+        "description": "Open Profile History"
+    }
   }
+  ,
+  "web_accessible_resources": [
+    {
+      "resources": ["history.html", "historyPopup.js"],
+      "matches": ["<all_urls>"]
+    }
+  ]
+  
 }
