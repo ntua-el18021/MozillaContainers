@@ -1,0 +1,29 @@
+{
+  "manifest_version": 3,
+  "name": "Container Profile Manager",
+  "version": "1.0",
+  "description": "Manages isolated profiles with password protection.",
+  "permissions": [
+    "cookies",
+    "storage",
+    "tabs",
+    "contextualIdentities",
+    "webNavigation"
+  ],
+  "action": {
+    "default_popup": "popup.html",
+    "default_icon": {
+      "16": "icons/history-mod.png",
+      "48": "icons/history-mod.png",
+      "128": "icons/history-mod.png"
+    }
+  },
+  "icons": {
+    "16": "icons/history-mod.png",
+    "48": "icons/history-mod.png",
+    "128": "icons/history-mod.png"
+  },
+  "background": {
+    "scripts": ["background.js"]
+  }
+}

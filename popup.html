@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Container Profile Manager</title>
+  <style>
+    /* Embedding styles here for clarity, but consider an external CSS if it grows */
+    #errorMsg {
+      color: red;
+      display: none;
+    }
+    
+    #namesPasswords {
+      display: none;
+    }
+  </style>
+</head>
+
+<body>
+  <h2>Profile Manager</h2>
+  <div id="errorMsg"></div> <!-- Error message div -->
+  <input type="text" id="profileName" placeholder="Enter Profile Name">
+  <input type="password" id="profilePassword" placeholder="Password (optional)">
+  <button id="createProfile">Create New Profile</button>
+
+  <button id="showNamesPasswords">Show Names and Passwords</button>
+  <div id="namesPasswords"></div>
+
+  <button id="deleteProfile">Delete Profile</button>
+  <select id="profileDeleteSelect"></select>
+
+  <script src="popup.js"></script>
+</body>
+
+</html>
