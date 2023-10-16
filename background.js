@@ -12,8 +12,6 @@ browser.commands.onCommand.addListener((command) => {
     }
 });
 
-
-// Create a new container.
 async function createContainer(name, password) {
     try {
         const context = await browser.contextualIdentities.create({
@@ -29,14 +27,13 @@ async function createContainer(name, password) {
         };
 
         await browser.storage.local.set(containerData);
-        return true; // Successfully created container and saved to storage
+        return true; 
     } catch (error) {
         console.error("Error in createContainer:", error);
-        return false; // Error occurred
+        return false; 
     }
 }
 
-// Handle messages from popup.js
 browser.runtime.onMessage.addListener(async (message, sender, sendResponse) => {
     if (message.command === "createContainer") {
         try {
@@ -49,3 +46,26 @@ browser.runtime.onMessage.addListener(async (message, sender, sendResponse) => {
     return true; 
 });
 
+browser.webNavigation.onCompleted.addListener(async (details) => {
+    if (details.frameId !== 0 || details.url.startsWith('moz-extension:') || details.url === "about:newtab") {
+        return;
+    }
+    
+    const tab = await browser.tabs.get(details.tabId);
+    console.log("Visited URL:", tab.url);
+
+    const containerId = tab.cookieStoreId;
+    const historyEntry = {
+        url: tab.url,
+        title: tab.title,
+        timestamp: Date.now()
+    };
+
+    const historyData = await browser.storage.local.get("history");
+    console.log('Retrieved History Data:', historyData);
+    let history = historyData.history || {};
+
+    history[containerId] = history[containerId] || [];
+    history[containerId].push(historyEntry);
+    await browser.storage.local.set({ history });
+});

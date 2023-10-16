@@ -8,8 +8,9 @@
     "storage",
     "tabs",
     "contextualIdentities",
-    "activeTab"
-],
+    "activeTab",
+    "webNavigation"
+  ],
 
   "action": {
     "default_popup": "popup.html",
