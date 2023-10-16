@@ -1,12 +1,8 @@
-// Helper functions
+// --------------- Helper functions ---------------
+
 async function isNameExists(name) {
     const existingProfiles = await browser.storage.local.get();
-    for (let key in existingProfiles) {
-        if (existingProfiles[key].profileName === name) {
-            return true;
-        }
-    }
-    return false;
+    return Object.values(existingProfiles).some(profile => profile.profileName === name);
 }
 
 function displayError(message) {
@@ -17,108 +13,124 @@ function displayError(message) {
 
 function displayNamesPasswords(items) {
     const outputDiv = document.getElementById('namesPasswords');
-    outputDiv.innerHTML = '';
-    if (Object.keys(items).length === 0) {
-        outputDiv.innerHTML = '<div>No profiles yet</div>';
-    } else {
-        for (let key in items) {
-            const name = items[key].profileName;
-            const password = items[key].password;
-            outputDiv.innerHTML += `<div>Name: ${name}, Password: ${password}</div>`;
-        }
-    }
+    outputDiv.innerHTML = Object.keys(items).length ? 
+                          Object.values(items).map(item => `<div>Name: ${item.profileName}, Password: ${item.password}</div>`).join('') :
+                          '<div>No profiles yet</div>';
     outputDiv.style.display = 'block';
 }
 
-// Profile Creation functionality
-document.getElementById('createProfile').addEventListener('click', async () => {
+// --------------- Event Listeners ---------------
+
+document.getElementById('createProfile').addEventListener('click', handleCreateProfile);
+document.getElementById('profileName').addEventListener('keydown', handleEnterKeyForProfile);
+document.getElementById('profilePassword').addEventListener('keydown', handleEnterKeyForProfile);
+document.getElementById('showNamesPasswords').addEventListener('click', handleShowNamesPasswords);
+document.getElementById('switchProfile').addEventListener('click', handleSwitchProfile);
+document.getElementById('deleteProfile').addEventListener('click', handleDeleteProfile);
+document.getElementById('openHistory').addEventListener('click', handleOpenHistory);
+document.getElementById('deleteAllContainers').addEventListener('click', handleDeleteAllContainers);
+
+async function handleCreateProfile() {
     const profileName = document.getElementById('profileName').value;
     const profilePassword = document.getElementById('profilePassword').value;
 
-    if (!profileName) {
-        displayError("Name must be filled!");
-        return;
-    }
-
-    if (await isNameExists(profileName)) {
-        displayError("Name already exists!");
-        return;
-    }
+    if (!profileName) return displayError("Name must be filled!");
+    if (await isNameExists(profileName)) return displayError("Name already exists!");
 
     const response = await browser.runtime.sendMessage({ 
         command: "createContainer", 
         name: profileName,
-        password: profilePassword // <-- Send password to background script
+        password: profilePassword 
     });
 
-    if (response) {
-        populateDeleteDropdown();
-    }
-});
-
-document.getElementById('profileName').addEventListener('keydown', function(e) {
-    if (e.key === "Enter") {
-        document.getElementById('createProfile').click();
-    }
-});
-
-document.getElementById('profilePassword').addEventListener('keydown', function(e) {
-    if (e.key === "Enter") {
-        document.getElementById('createProfile').click();
-    }
-});
-
-// Show Names and Passwords
-document.getElementById('showNamesPasswords').addEventListener('click', async () => {
-    const items = await browser.storage.local.get();
-    displayNamesPasswords(items);
-});
-
-// Populate the dropdown list with profile names for switching
-async function populateSwitchDropdown() {
-    const existingProfiles = await browser.storage.local.get();
-    const profileSwitchSelect = document.getElementById('profileSwitchSelect');
-    profileSwitchSelect.innerHTML = '';
-
-    if (Object.keys(existingProfiles).length === 0) {
-        let noProfileOption = document.createElement('option');
-        noProfileOption.value = "";
-        noProfileOption.innerText = "No profiles yet";
-        profileSwitchSelect.appendChild(noProfileOption);
-    } else {
-        for (let key in existingProfiles) {
-            let option = document.createElement('option');
-            option.value = key;
-            option.innerText = existingProfiles[key].profileName;
-            profileSwitchSelect.appendChild(option);
-        }
-    }
+    if (response) populateDeleteDropdown();
 }
 
-// Switching profiles
-document.getElementById('switchProfile').addEventListener('click', async () => {
+function handleEnterKeyForProfile(e) {
+    if (e.key === "Enter") document.getElementById('createProfile').click();
+}
+
+async function handleShowNamesPasswords() {
+    displayNamesPasswords(await browser.storage.local.get());
+}
+
+async function handleSwitchProfile() {
     const selectedProfileKey = document.getElementById('profileSwitchSelect').value;
     const existingProfiles = await browser.storage.local.get();
 
-    if (Object.keys(existingProfiles).length === 0) {
-        displayError("No profiles to switch!");
-        return;
-    }
+    if (!Object.keys(existingProfiles).length) return displayError("No profiles to switch!");
+    if (!selectedProfileKey) return displayError("Please select a profile to switch.");
 
-    if (!selectedProfileKey) {
-        displayError("Please select a profile to switch.");
-        return;
-    }
-
-    const selectedProfile = existingProfiles[selectedProfileKey];
     browser.tabs.create({
-        cookieStoreId: selectedProfile.cookieStoreId
+        cookieStoreId: existingProfiles[selectedProfileKey].cookieStoreId
     });
+}
 
-    console.log("Switching to profile:", selectedProfile.profileName);
-});
+async function handleDeleteProfile() {
+    const selectedProfileKey = document.getElementById('profileDeleteSelect').value;
+    const existingProfiles = await browser.storage.local.get();
 
-// Populate the dropdown list with profile names for deletion
+    if (!Object.keys(existingProfiles).length) return displayError("No profiles to delete!");
+    if (!selectedProfileKey) return;
+
+    // Code for handling deletion (extracted to keep things organized)
+    await executeProfileDeletion(selectedProfileKey, existingProfiles);
+
+    populateDeleteDropdown();
+    displayNamesPasswords(await browser.storage.local.get());
+}
+
+function handleOpenHistory() {
+    browser.windows.create({
+        url: browser.runtime.getURL('history.html'),
+        type: "popup",
+        height: 400,
+        width: 600
+    });
+}
+
+async function handleDeleteAllContainers() {
+    if (!confirm("Are you sure you want to delete ALL containers?")) return;
+
+    const allContainers = await browser.contextualIdentities.query({});
+    for (let container of allContainers) {
+        await browser.contextualIdentities.remove(container.cookieStoreId);
+    }
+    await browser.storage.local.clear();
+    populateDeleteDropdown();
+    displayNamesPasswords(await browser.storage.local.get());
+}
+
+// --------------- Initialization ---------------
+
+populateDeleteDropdown();
+
+// --------------- Helper Functions for Deletion and Dropdowns (to further clean things up) ---------------
+
+async function executeProfileDeletion(selectedProfileKey, existingProfiles) {
+    if (selectedProfileKey === "allProfiles") {
+        if (!confirm("Are you sure you want to delete all profiles?")) return;
+
+        const keysToDelete = Object.keys(existingProfiles);
+        for (let key of keysToDelete) {
+            try {
+                await browser.contextualIdentities.remove(existingProfiles[key].cookieStoreId);
+            } catch (error) {
+                console.error(`Failed to delete container with ID: ${existingProfiles[key].cookieStoreId}. Error: ${error.message}`);
+            }
+        }
+        await browser.storage.local.remove(keysToDelete);
+    } else {
+        const containerIdToDelete = existingProfiles[selectedProfileKey].cookieStoreId;
+        if (!containerIdToDelete) {
+            console.error("No container ID found for the selected profile. Cannot delete.");
+            return;
+        }
+        await browser.contextualIdentities.remove(containerIdToDelete);
+        await browser.storage.local.remove(selectedProfileKey);
+    }
+}
+
 async function populateDeleteDropdown() {
     const existingProfiles = await browser.storage.local.get();
     const profileDeleteSelect = document.getElementById('profileDeleteSelect');
@@ -139,80 +151,23 @@ async function populateDeleteDropdown() {
     populateSwitchDropdown();
 }
 
-// Profile deletion
-document.getElementById('deleteProfile').addEventListener('click', async () => {
-    const selectedProfileKey = document.getElementById('profileDeleteSelect').value;
+async function populateSwitchDropdown() {
     const existingProfiles = await browser.storage.local.get();
+    const profileSwitchSelect = document.getElementById('profileSwitchSelect');
+    profileSwitchSelect.innerHTML = '';
 
     if (Object.keys(existingProfiles).length === 0) {
-        displayError("No profiles to delete!");
-        return;
-    }
-
-    if (!selectedProfileKey) {
-        console.log("No profile selected for deletion.");
-        return;
-    }
-
-    if (selectedProfileKey === "allProfiles") {
-        const confirmDelete = confirm("Are you sure you want to delete all profiles?");
-        if (confirmDelete) {
-            const keysToDelete = Object.keys(existingProfiles);
-            for (let key of keysToDelete) {
-                console.log("All existing profiles:", existingProfiles);
-                console.log("Attempting to delete container with ID:", existingProfiles[key].cookieStoreId);
-                // This line deletes the associated container for each profile
-                try {
-                    await browser.contextualIdentities.remove(existingProfiles[key].cookieStoreId);
-                } catch (error) {
-                    console.error(`Failed to delete container with ID: ${existingProfiles[key].cookieStoreId}. Error: ${error.message}`);
-                }
-                            }
-            await browser.storage.local.remove(keysToDelete);
-            displayNamesPasswords(await browser.storage.local.get());
-        }    
+        let noProfileOption = document.createElement('option');
+        noProfileOption.value = "";
+        noProfileOption.innerText = "No profiles yet";
+        profileSwitchSelect.appendChild(noProfileOption);
     } else {
-        console.log("Selected profile key:", selectedProfileKey);
-        console.log("Profile data for selected key:", existingProfiles[selectedProfileKey]);
-        const containerIdToDelete = existingProfiles[selectedProfileKey].cookieStoreId;
-        if (!containerIdToDelete) {
-            console.error("No container ID found for the selected profile. Cannot delete.");
-            return;
+        for (let key in existingProfiles) {
+            let option = document.createElement('option');
+            option.value = key;
+            option.innerText = existingProfiles[key].profileName;
+            profileSwitchSelect.appendChild(option);
         }
-        console.log("Attempting to delete container with ID:", containerIdToDelete);
-        await browser.contextualIdentities.remove(existingProfiles[selectedProfileKey].cookieStoreId); // <-- delete the associated container
-        await browser.storage.local.remove(selectedProfileKey);
-        displayNamesPasswords(await browser.storage.local.get());
     }
+}
 
-    populateDeleteDropdown();
-});
-
-
-// Initialize the dropdown list on popup load
-populateDeleteDropdown();
-
-// Open history in a new window
-document.getElementById('openHistory').addEventListener('click', () => {
-    browser.windows.create({
-        url: browser.runtime.getURL('history.html'),
-        type: "popup",
-        height: 400,
-        width: 600
-    });
-});
-
-// Delete all containers
-document.getElementById('deleteAllContainers').addEventListener('click', async () => {
-    const confirmDelete = confirm("Are you sure you want to delete ALL containers?");
-    if (confirmDelete) {
-        const allContainers = await browser.contextualIdentities.query({});
-        for (let container of allContainers) {
-            await browser.contextualIdentities.remove(container.cookieStoreId);
-        }
-        const allProfileKeys = Object.keys(await browser.storage.local.get());
-        await browser.storage.local.remove(allProfileKeys);
-        populateDeleteDropdown();
-        displayNamesPasswords(await browser.storage.local.get());
-    }
-});
