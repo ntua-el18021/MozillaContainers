@@ -12,12 +12,22 @@ function displayError(message) {
 }
 
 function displayNamesPasswords(items) {
+    // console.log('displayNamesPasswords -> found those items(all items in local): ', items);
+
+    // Filter out items with keys that don't start with "firefox-container-"
+    const profiles = Object.entries(items)
+                            .filter(([key]) => key.startsWith("firefox-container-"))
+                            .map(([key, value]) => value);
+    
+    // console.log('Profiles found in local: ', profiles);
+
     const outputDiv = document.getElementById('namesPasswords');
-    outputDiv.innerHTML = Object.keys(items).length ? 
-                          Object.values(items).map(item => `<div>Name: ${item.profileName}, Password: ${item.password}</div>`).join('') :
+    outputDiv.innerHTML = profiles.length ? 
+                          profiles.map(item => `<div>Name: ${item.profileName}, Password: ${item.password}</div>`).join('') :
                           '<div>No profiles yet</div>';
     outputDiv.style.display = 'block';
 }
+
 
 // --------------- Event Listeners ---------------
 
@@ -31,6 +41,7 @@ document.getElementById('openHistory').addEventListener('click', handleOpenHisto
 document.getElementById('deleteAllContainers').addEventListener('click', handleDeleteAllContainers);
 
 async function handleCreateProfile() {
+    // console.log('create profile called from popup');
     const profileName = document.getElementById('profileName').value;
     const profilePassword = document.getElementById('profilePassword').value;
 
@@ -57,8 +68,11 @@ async function handleShowNamesPasswords() {
 async function handleSwitchProfile() {
     const selectedProfileKey = document.getElementById('profileSwitchSelect').value;
     const existingProfiles = await browser.storage.local.get();
-
-    if (!Object.keys(existingProfiles).length) return displayError("No profiles to switch!");
+    
+    // Filtering based on the key pattern.
+    const filteredProfiles = Object.keys(existingProfiles).filter(key => key.startsWith("firefox-container-"));
+    
+    if (!filteredProfiles.length) return displayError("No profiles to switch!");
     if (!selectedProfileKey) return displayError("Please select a profile to switch.");
 
     browser.tabs.create({
@@ -66,14 +80,19 @@ async function handleSwitchProfile() {
     });
 }
 
+
 async function handleDeleteProfile() {
     const selectedProfileKey = document.getElementById('profileDeleteSelect').value;
     const existingProfiles = await browser.storage.local.get();
+    
+    // Filtering based on the key pattern.
+    const filteredProfiles = Object.keys(existingProfiles).filter(key => key.startsWith("firefox-container-"));
 
-    if (!Object.keys(existingProfiles).length) return displayError("No profiles to delete!");
+    if (!filteredProfiles.length) return displayError("No profiles to delete!");
     if (!selectedProfileKey) return;
 
     // Code for handling deletion (extracted to keep things organized)
+    // console.log('handleDeleteProfile -> found those profiles: ', filteredProfiles);
     await executeProfileDeletion(selectedProfileKey, existingProfiles);
 
     populateDeleteDropdown();
@@ -141,7 +160,10 @@ async function populateDeleteDropdown() {
     allProfilesOption.innerText = "All Profiles";
     profileDeleteSelect.appendChild(allProfilesOption);
 
+    // Filtering based on the key pattern.
     for (let key in existingProfiles) {
+        if (!key.startsWith("firefox-container-")) continue;
+        
         let option = document.createElement('option');
         option.value = key;
         option.innerText = existingProfiles[key].profileName;
@@ -156,13 +178,17 @@ async function populateSwitchDropdown() {
     const profileSwitchSelect = document.getElementById('profileSwitchSelect');
     profileSwitchSelect.innerHTML = '';
 
-    if (Object.keys(existingProfiles).length === 0) {
+    const filteredProfiles = Object.keys(existingProfiles).filter(key => key.startsWith("firefox-container-"));
+    
+    if (filteredProfiles.length === 0) {
         let noProfileOption = document.createElement('option');
         noProfileOption.value = "";
         noProfileOption.innerText = "No profiles yet";
         profileSwitchSelect.appendChild(noProfileOption);
     } else {
         for (let key in existingProfiles) {
+            if (!key.startsWith("firefox-container-")) continue;
+            
             let option = document.createElement('option');
             option.value = key;
             option.innerText = existingProfiles[key].profileName;

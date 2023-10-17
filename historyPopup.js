@@ -1,34 +1,37 @@
-console.log("historyPopup.js loaded and executing...");
+// console.log("historyPopup.js loaded and executing...");
 
 (async function() {    
-    console.log("Fetching history for current container...");
-    try {
-        const currentTab = await getLastActiveTab();
-        console.log("Current Tab URL:", currentTab.url);
+    // console.log("Fetching history for current container...");
+    
+    const currentTab = await getLastActiveTab();
+    // console.log("----->Current Tab URL:", currentTab.url, "\n with containerID: ", currentTab.cookieStoreId);
 
-        const historyData = await browser.storage.local.get("history");
-        console.log("Stored History Data:", historyData);
+    const storedData = await browser.storage.local.get();
+    // console.log("=======>Stored Data:", storedData);
 
-        let allHistory = [];
-        for (let profile in historyData.history) {
-            allHistory.push(...historyData.history[profile]);
+    let allHistory = [];
+    for (let profile in storedData.history) {
+        allHistory.push(...storedData.history[profile]);
+        // console.log('===><===AllHistory: ', allHistory);
+    }
+    
+    function getProfileName(cookieStoreId) {
+        if (storedData[cookieStoreId] && storedData[cookieStoreId].profileName) {
+            return storedData[cookieStoreId].profileName;
         }
-        
-        if (allHistory.length > 0) {
-            console.log("Displaying all history...");
-            displayHistory(allHistory);
-        } else {
-            console.log("No history found");
-        }
-    } catch (error) {
-        console.error("Error fetching or displaying history:", error);
+        return "Unknown Profile";
+    }
+    
+
+    if (allHistory.length > 0) {
+        // console.log("Displaying all history...");
+        displayHistory(allHistory, getProfileName);
+    } else {
+        console.log("No history found");
     }
 })();
 
-
-
-
-function displayHistory(history) {
+function displayHistory(history, getProfileNameFn) {
     if (!history) return;
 
     const historyDiv = document.getElementById('historyList');
@@ -46,6 +49,10 @@ function displayHistory(history) {
         titleDiv.innerHTML = `<strong>Title:</strong> ${item.title}`;
         itemDiv.appendChild(titleDiv);
 
+        let profileNameDiv = document.createElement('div');
+        profileNameDiv.innerHTML = `<strong>Profile:</strong> ${getProfileNameFn(item.cookieStoreId)}`;
+        itemDiv.appendChild(profileNameDiv);
+
         let date = new Date(item.timestamp);
         let formattedDate = `${date.getMonth() + 1}/${date.getDate()}/${date.getFullYear()} ${date.getHours()}:${String(date.getMinutes()).padStart(2, '0')}:${String(date.getSeconds()).padStart(2, '0')} ${date.getHours() >= 12 ? 'PM' : 'AM'}`;
         let timestampDiv = document.createElement('div');
@@ -59,12 +66,8 @@ function displayHistory(history) {
 async function getLastActiveTab() {
     let queryOptions = { currentWindow: true };
     let tabs = await browser.tabs.query(queryOptions);
-    // Assuming the active tab is the last one in the array. So, we return the second last.
     if (tabs.length > 1) {
         return tabs[tabs.length - 2];
     }
-    // If there's only one tab, then return it.
     return tabs[0];
 }
-
-
