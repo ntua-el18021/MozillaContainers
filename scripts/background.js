@@ -1,7 +1,33 @@
 // Set the extension icon
 browser.action.setIcon({ path: "../icons/history-mod.png" });
+let lastActiveTabId="";
+
+browser.runtime.onMessage.addListener(async (message, sender, sendResponse) => {
+    switch(message.command){
+        case "getLastActiveTabInfo":
+            console.log('background got message');
+            console.log('background somesome: ', lastActiveTabId);
+            let toSendLastActiveTabId = lastActiveTabId;
+            lastActiveTabId="";
+            return { tabInfo: toSendLastActiveTabId}; // Respond with the stored tab info using return 
+        case "createContainer":
+            try {
+                await createContainer(message.name, message.password);
+                sendResponse({ success: true });
+            } catch (error) {
+                sendResponse({ success: false, error: error.message });
+            }
+            break;
+        default:
+            console.log('Unknown command received:', message.command);
+            break;
+    }
+    return true;
+});
+
 
 async function openHistoryForActiveTab() {
+    // Before calling html update the 'lastActiveTabId' variable to be retrieved from script!
     let [activeTab] = await browser.tabs.query({
         active: true,
         currentWindow: true
@@ -10,8 +36,9 @@ async function openHistoryForActiveTab() {
     if (activeTab) {
         let storedData = await browser.storage.local.get(activeTab.cookieStoreId);
         let profileName = storedData[activeTab.cookieStoreId]?.profileName || "Unknown Profile";
-    
-        console.log('=====>> Open History Called, from profile ID: ', activeTab.cookieStoreId, "\nWith ContainerName: ", profileName);
+        if(profileName!="Unknown Profile"){
+            lastActiveTabId = storedData[activeTab.cookieStoreId].cookieStoreId;
+        }
     }
     
     browser.windows.create({
@@ -55,17 +82,7 @@ async function createContainer(name, password) {
     }
 }
 
-browser.runtime.onMessage.addListener(async (message, sender, sendResponse) => {
-    if (message.command === "createContainer") {
-        try {
-            await createContainer(message.name, message.password);
-            sendResponse({ success: true });
-        } catch (error) {
-            sendResponse({ success: false, error: error.message });
-        }
-    }
-    return true; 
-});
+
 
 browser.webNavigation.onCompleted.addListener(async (details) => {
     if (details.frameId !== 0 || details.url.startsWith('moz-extension:') || details.url === "about:newtab") {

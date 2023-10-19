@@ -1,18 +1,28 @@
-// console.log("historyPopup.js loaded and executing...");
-
 (async function() {    
-    // console.log("Fetching history for current container...");
-    
-    const currentTab = await getLastActiveTab();
-    // console.log("----->Current Tab URL:", currentTab.url, "\n with containerID: ", currentTab.cookieStoreId);
-
+    // const currentTab = await getLastActiveTab();
     const storedData = await browser.storage.local.get();
-    // console.log("=======>Stored Data:", storedData);
+    let lastActiveTabId="";
+    console.log('popup requesting message');
+    try {
+        let response = await browser.runtime.sendMessage({command: "getLastActiveTabInfo"});
+        console.log('response: ',response);
+        lastActiveTabId = response.tabInfo;
 
+        console.log('Last Active Tab:', lastActiveTabId);
+        // Process the last active tab info as needed
+        // ...
+    } catch (error) {
+        console.error('Error while fetching last active tab info:', error);
+    }
+
+    
     let allHistory = [];
     for (let profile in storedData.history) {
-        allHistory.push(...storedData.history[profile]);
-        // console.log('===><===AllHistory: ', allHistory);
+        console.log('profile: ', profile);
+        console.log('lastActiveTabId: ', lastActiveTabId);
+        if(profile==lastActiveTabId){
+            allHistory.push(...storedData.history[profile]);
+        }
     }
     
     function getProfileName(cookieStoreId) {
@@ -24,7 +34,6 @@
     
 
     if (allHistory.length > 0) {
-        // console.log("Displaying all history...");
         displayHistory(allHistory, getProfileName);
     } else {
         console.log("No history found");
@@ -62,11 +71,11 @@ function displayHistory(history, getProfileNameFn) {
     });
 }
 
-async function getLastActiveTab() {
-    let queryOptions = { currentWindow: true };
-    let tabs = await browser.tabs.query(queryOptions);
-    if (tabs.length > 1) {
-        return tabs[tabs.length - 2];
-    }
-    return tabs[0];
-}
+// async function getLastActiveTab() {
+//     let queryOptions = { currentWindow: true };
+//     let tabs = await browser.tabs.query(queryOptions);
+//     if (tabs.length > 1) {
+//         return tabs[tabs.length - 2];
+//     }
+//     return tabs[0];
+// }
