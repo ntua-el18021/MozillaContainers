@@ -1,5 +1,5 @@
 // Set the extension icon
-browser.action.setIcon({ path: "icons/history-mod.png" });
+browser.action.setIcon({ path: "../icons/history-mod.png" });
 
 async function openHistoryForActiveTab() {
     let [activeTab] = await browser.tabs.query({
@@ -15,7 +15,7 @@ async function openHistoryForActiveTab() {
     }
     
     browser.windows.create({
-        url: browser.runtime.getURL('history.html'),
+        url: browser.runtime.getURL('../views/history.html'),
         type: "popup",
         height: 400,
         width: 600

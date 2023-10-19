@@ -33,7 +33,6 @@
 
 function displayHistory(history, getProfileNameFn) {
     if (!history) return;
-
     const historyDiv = document.getElementById('historyList');
     historyDiv.innerHTML = '';  // Clear previous history
 
