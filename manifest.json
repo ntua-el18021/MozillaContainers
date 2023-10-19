@@ -13,7 +13,7 @@
   ],
 
   "action": {
-    "default_popup": "popup.html",
+    "default_popup": "views/popup.html",
     "default_icon": {
       "16": "icons/history-mod.png",
       "48": "icons/history-mod.png",
@@ -26,7 +26,7 @@
     "128": "icons/history-mod.png"
   },
   "background": {
-    "scripts": ["background.js"]
+    "scripts": ["scripts/background.js"]
   },
   "commands": {
     "open_history": {
@@ -39,7 +39,7 @@
   ,
   "web_accessible_resources": [
     {
-      "resources": ["history.html", "historyPopup.js"],
+      "resources": ["views/history.html", "scripts/historyPopup.js"],
       "matches": ["<all_urls>"]
     }
   ]

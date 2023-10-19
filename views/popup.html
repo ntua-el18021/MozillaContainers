@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <link rel="stylesheet" href="../styles/popupStyles.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Container Profile Manager</title>
+</head>
+
+<body>
+    <h2>Profile Manager</h2>
+    <div id="errorMsg"></div> <!-- Error message div -->
+    <button id="switchProfile">Switch Profile</button>
+    <select id="profileSwitchSelect"></select>
+
+    <div id="spacer"></div>
+
+    <input type="text" id="profileName" placeholder="Enter Profile Name">
+    <input type="password" id="profilePassword" placeholder="Password (optional)">
+    <button id="createProfile">Create New Profile</button>
+
+    <button id="showNamesPasswords">Show Names and Passwords</button>
+    <div id="namesPasswords"></div>
+
+    <div id="spacer"></div> <!-- Spacer to give a space below delete options -->
+
+    <button id="deleteProfile">Delete Profile</button>
+    <select id="profileDeleteSelect"></select>
+
+    <button id="openHistory">Open History</button>
+
+    <div id="spacer"></div> <!-- Spacer to give a space below delete options -->
+    <button id="deleteAllContainers">Delete All Containers</button>
+
+    <script src="../scripts/popup.js"></script>
+    <script src="../scripts/background.js"></script>
+
+</body>
+
+</html>
