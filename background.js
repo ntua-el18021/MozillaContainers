@@ -1,19 +1,35 @@
 // Set the extension icon
 browser.action.setIcon({ path: "icons/history-mod.png" });
 
-browser.commands.onCommand.addListener((command) => {
+async function openHistoryForActiveTab() {
+    let [activeTab] = await browser.tabs.query({
+        active: true,
+        currentWindow: true
+    });
+
+    if (activeTab) {
+        let storedData = await browser.storage.local.get(activeTab.cookieStoreId);
+        let profileName = storedData[activeTab.cookieStoreId]?.profileName || "Unknown Profile";
+    
+        console.log('=====>> Open History Called, from profile ID: ', activeTab.cookieStoreId, "\nWith ContainerName: ", profileName);
+    }
+    
+    browser.windows.create({
+        url: browser.runtime.getURL('history.html'),
+        type: "popup",
+        height: 400,
+        width: 600
+    });
+}
+
+browser.commands.onCommand.addListener(async (command) => {
     if (command === "open_history") {
-        browser.windows.create({
-            url: browser.runtime.getURL('history.html'),
-            type: "popup",
-            height: 400,
-            width: 600
-        });
+        openHistoryForActiveTab();
     }
 });
 
+
 async function createContainer(name, password) {
-    // console.log('Create container called for name: ', name);
     try {
         if (!name) {
             console.error("Trying to create a container with no name!");
@@ -32,7 +48,6 @@ async function createContainer(name, password) {
         };
 
         await browser.storage.local.set(containerData);
-        // console.log('Container Created with ID: ', context.cookieStoreId);
         return true; 
     } catch (error) {
         console.error("Error in createContainer:", error);
@@ -43,7 +58,6 @@ async function createContainer(name, password) {
 browser.runtime.onMessage.addListener(async (message, sender, sendResponse) => {
     if (message.command === "createContainer") {
         try {
-            // console.log('Listener for Create Container called with message: ', message);
             await createContainer(message.name, message.password);
             sendResponse({ success: true });
         } catch (error) {
@@ -59,22 +73,21 @@ browser.webNavigation.onCompleted.addListener(async (details) => {
     }
 
     const tab = await browser.tabs.get(details.tabId);
-    // console.log("Visited URL:", tab.url);
 
     const containerId = tab.cookieStoreId;
-    console.log('BACKGROUND-Completed loading for url for profile with id: ', containerId);
+    // console.log('BACKGROUND-Completed loading for url for profile with id: ', containerId);
     // Retrieve the profile data from storage
     const storedData = await browser.storage.local.get();
 
     // Check if the navigation occurred within a known profile container
     if (!storedData[containerId]) {
-        console.log("BACKGROUND-Navigation occurred in a non-profile-specific container:", containerId);
-        console.log('BACKGROUND-This is its id: ', storedData[containerId].cookieStoreId);
+        // console.log("BACKGROUND-Navigation occurred in a non-profile-specific container:", containerId);
+        // console.log('BACKGROUND-This is its id: ', storedData[containerId].cookieStoreId);
         return;  // Skip recording this navigation
     }
 
-    console.log('BACKGROUND-Navigation occured in PROFILE with id: ', storedData[containerId].cookieStoreId);
-    console.log('BACKGROUND-Profile assumed named: ', storedData[containerId].profileName);
+    // console.log('BACKGROUND-Navigation occured in PROFILE with id: ', storedData[containerId].cookieStoreId);
+    // console.log('BACKGROUND-Profile assumed named: ', storedData[containerId].profileName);
     
     let profileName = storedData[containerId].profileName
     // let profileName = storedData[containerId].profileName || "Unknown Profile";
@@ -88,11 +101,11 @@ browser.webNavigation.onCompleted.addListener(async (details) => {
     };
 
     const demoData = await browser.storage.local.get();
-    console.log("BACKGROUND-Retrived local storage ALL: ", demoData)
+    // console.log("BACKGROUND-Retrived local storage ALL: ", demoData)
 
     const historyData = await browser.storage.local.get("history");
-    console.log('BACKGROUND-Retrieved History Data:', historyData);
-    console.log('\n\n');
+    // console.log('BACKGROUND-Retrieved History Data:', historyData);
+    // console.log('\n\n');
     let history = historyData.history || {};
 
     history[containerId] = history[containerId] || [];

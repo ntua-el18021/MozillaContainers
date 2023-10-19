@@ -100,12 +100,7 @@ async function handleDeleteProfile() {
 }
 
 function handleOpenHistory() {
-    browser.windows.create({
-        url: browser.runtime.getURL('history.html'),
-        type: "popup",
-        height: 400,
-        width: 600
-    });
+    openHistoryForActiveTab();
 }
 
 async function handleDeleteAllContainers() {
