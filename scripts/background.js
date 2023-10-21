@@ -2,28 +2,28 @@
 browser.action.setIcon({ path: "../icons/history-mod.png" });
 let lastActiveTabId="";
 
-browser.runtime.onMessage.addListener(async (message, sender, sendResponse) => {
-    switch(message.command){
-        case "getLastActiveTabInfo":
-            console.log('background got message');
-            console.log('background somesome: ', lastActiveTabId);
-            let toSendLastActiveTabId = lastActiveTabId;
-            lastActiveTabId="";
-            return { tabInfo: toSendLastActiveTabId}; // Respond with the stored tab info using return 
-        case "createContainer":
-            try {
+browser.runtime.onMessage.addListener(async (message) => {
+    console.log('background got message:', message);
+    try {
+        switch(message.command){
+            case "getLastActiveTabInfo":
+                console.log('Sending last active tab ID:', lastActiveTabId);
+                let toSendLastActiveTabId = lastActiveTabId;
+                lastActiveTabId = "";
+                return { tabInfo: toSendLastActiveTabId };
+            case "createContainer":
                 await createContainer(message.name, message.password);
-                sendResponse({ success: true });
-            } catch (error) {
-                sendResponse({ success: false, error: error.message });
-            }
-            break;
-        default:
-            console.log('Unknown command received:', message.command);
-            break;
+                return { success: true };
+            default:
+                console.error('Unknown command received:', message.command);
+                return { success: false, error: 'Unknown command' };
+        }
+    } catch (error) {
+        console.error('Error handling message:', message, 'Error:', error);
+        return { success: false, error: error.message || 'Unknown error' };
     }
-    return true;
 });
+
 
 
 async function openHistoryForActiveTab() {

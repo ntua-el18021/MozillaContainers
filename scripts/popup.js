@@ -12,18 +12,15 @@ function displayError(message) {
 }
 
 function displayNamesPasswords(items) {
-    // console.log('displayNamesPasswords -> found those items(all items in local): ', items);
-
     // Filter out items with keys that don't start with "firefox-container-"
     const profiles = Object.entries(items)
                             .filter(([key]) => key.startsWith("firefox-container-"))
                             .map(([key, value]) => value);
     
-    // console.log('Profiles found in local: ', profiles);
-
     const outputDiv = document.getElementById('namesPasswords');
     outputDiv.innerHTML = profiles.length ? 
-                          profiles.map(item => `<div>Name: ${item.profileName}, Password: ${item.password}</div>`).join('') :
+                        //   profiles.map(item => `<div>Name: ${item.profileName}, Password: ${item.password}</div>`).join('') :
+                        profiles.map(item => `<div>Name: ${item.profileName}</div>`).join('') :
                           '<div>No profiles yet</div>';
     outputDiv.style.display = 'block';
 }
@@ -33,17 +30,16 @@ function displayNamesPasswords(items) {
 
 document.getElementById('createProfile').addEventListener('click', handleCreateProfile);
 document.getElementById('profileName').addEventListener('keydown', handleEnterKeyForProfile);
-document.getElementById('profilePassword').addEventListener('keydown', handleEnterKeyForProfile);
+// document.getElementById('profilePassword').addEventListener('keydown', handleEnterKeyForProfile);
 document.getElementById('showNamesPasswords').addEventListener('click', handleShowNamesPasswords);
 document.getElementById('switchProfile').addEventListener('click', handleSwitchProfile);
 document.getElementById('deleteProfile').addEventListener('click', handleDeleteProfile);
 document.getElementById('openHistory').addEventListener('click', handleOpenHistory);
-document.getElementById('deleteAllContainers').addEventListener('click', handleDeleteAllContainers);
+// document.getElementById('deleteAllContainers').addEventListener('click', handleDeleteAllContainers);
 
 async function handleCreateProfile() {
-    // console.log('create profile called from popup');
     const profileName = document.getElementById('profileName').value;
-    const profilePassword = document.getElementById('profilePassword').value;
+    // const profilePassword = document.getElementById('profilePassword').value;
 
     if (!profileName) return displayError("Name must be filled!");
     if (await isNameExists(profileName)) return displayError("Name already exists!");
@@ -51,7 +47,7 @@ async function handleCreateProfile() {
     const response = await browser.runtime.sendMessage({ 
         command: "createContainer", 
         name: profileName,
-        password: profilePassword 
+        // password: profilePassword 
     });
 
     if (response) populateDeleteDropdown();
@@ -92,7 +88,6 @@ async function handleDeleteProfile() {
     if (!selectedProfileKey) return;
 
     // Code for handling deletion (extracted to keep things organized)
-    // console.log('handleDeleteProfile -> found those profiles: ', filteredProfiles);
     await executeProfileDeletion(selectedProfileKey, existingProfiles);
 
     populateDeleteDropdown();
@@ -103,17 +98,17 @@ function handleOpenHistory() {
     openHistoryForActiveTab();
 }
 
-async function handleDeleteAllContainers() {
-    if (!confirm("Are you sure you want to delete ALL containers?")) return;
+// async function handleDeleteAllContainers() {
+//     if (!confirm("Are you sure you want to delete ALL containers?")) return;
 
-    const allContainers = await browser.contextualIdentities.query({});
-    for (let container of allContainers) {
-        await browser.contextualIdentities.remove(container.cookieStoreId);
-    }
-    await browser.storage.local.clear();
-    populateDeleteDropdown();
-    displayNamesPasswords(await browser.storage.local.get());
-}
+//     const allContainers = await browser.contextualIdentities.query({});
+//     for (let container of allContainers) {
+//         await browser.contextualIdentities.remove(container.cookieStoreId);
+//     }
+//     await browser.storage.local.clear();
+//     populateDeleteDropdown();
+//     displayNamesPasswords(await browser.storage.local.get());
+// }
 
 // --------------- Initialization ---------------
 
