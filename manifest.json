@@ -39,7 +39,7 @@
   ,
   "web_accessible_resources": [
     {
-      "resources": ["views/history.html", "scripts/historyPopup.js"],
+      "resources": ["views/history.html", "scripts/historyPopup/historyPopup.js"],
       "matches": ["<all_urls>"]
     }
   ]

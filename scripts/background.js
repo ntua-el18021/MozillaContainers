@@ -1,46 +1,81 @@
-// Set the extension icon
-browser.action.setIcon({ path: "../icons/history-mod.png" });
-let lastActiveTabId="";
+/**
+ * This script is run in the background and handles the following:
+ * ------------------------------------
+ * onMessage Listener: Handles messages sent from other scripts
+ * - getLastActiveTabInfo: Returns the last active tab's information
+ * - createContainer: Creates a new container
+ * 
+ * openHistoryForActiveTab: Opens the history view for the last active tab
+ * - called from popup.js and keyboard shortcut
+ * - opens a new popup window i.e history.html
+ * - updates the lastActiveTabId variable to be used in the history.html script
+ * 
+ * onCommand Listeners: Handles keyboard shortcuts
+ * 
+ * createContainer: Creates a new container
+ * - called from popup.js
+ * - creates a new container and stores its information in local storage
+ * - returns a boolean indicating success
+ * 
+ * onCompleted Listener: Handles history tracking
+ * - called when a navigation is completed
+ * - checks if the navigation occurred within a known container
+ * - creates a new history entry and stores it in local storage
+ * ------------------------------------ 
+ */
 
+// Set the browser extension icon
+browser.action.setIcon({ path: "../icons/history-mod.png" });
+
+// Variable to store the ID of the last active tab
+let lastActiveTabId = null;
+
+// --------------- onMessage Listener ---------------
+// Handles messages sent from other scripts
 browser.runtime.onMessage.addListener(async (message) => {
-    console.log('background got message:', message);
     try {
         switch(message.command){
+            // Handle the request to get the last active tab's information
             case "getLastActiveTabInfo":
-                console.log('Sending last active tab ID:', lastActiveTabId);
-                let toSendLastActiveTabId = lastActiveTabId;
-                lastActiveTabId = "";
+                const toSendLastActiveTabId = lastActiveTabId;
+                lastActiveTabId = null; // Reset the lastActiveTabId after sending
                 return { tabInfo: toSendLastActiveTabId };
+
+            // Handle the request to create a new container
             case "createContainer":
-                await createContainer(message.name, message.password);
-                return { success: true };
+                const success = await createContainer(message.name);
+                return { success };
+
+            // Handle unknown commands
             default:
                 console.error('Unknown command received:', message.command);
                 return { success: false, error: 'Unknown command' };
         }
     } catch (error) {
+        // Log any errors that occur during message handling
         console.error('Error handling message:', message, 'Error:', error);
         return { success: false, error: error.message || 'Unknown error' };
     }
 });
 
-
-
+// --------------- Open HistoryForActive Function ---------------
+// is a response to a call from popup.js or to the keyboard shortcut (see below and manifest.json)
 async function openHistoryForActiveTab() {
-    // Before calling html update the 'lastActiveTabId' variable to be retrieved from script!
-    let [activeTab] = await browser.tabs.query({
-        active: true,
-        currentWindow: true
-    });
+    const [activeTab] = await browser.tabs.query({active: true, currentWindow: true});
 
+    // Check if there is an active tab
     if (activeTab) {
-        let storedData = await browser.storage.local.get(activeTab.cookieStoreId);
-        let profileName = storedData[activeTab.cookieStoreId]?.profileName || "Unknown Profile";
-        if(profileName!="Unknown Profile"){
+        // Retrieve the container information for the active tab
+        const storedData = await browser.storage.local.get(activeTab.cookieStoreId);
+        const profileName = storedData[activeTab.cookieStoreId]?.profileName || "Unknown Profile";
+        
+        // If the active tab is within a known container, store its ID for later use
+        if (profileName !== "Unknown Profile") {
             lastActiveTabId = storedData[activeTab.cookieStoreId].cookieStoreId;
         }
     }
     
+    // Open the history view in a new popup window
     browser.windows.create({
         url: browser.runtime.getURL('../views/history.html'),
         type: "popup",
@@ -49,85 +84,82 @@ async function openHistoryForActiveTab() {
     });
 }
 
+// --------------- OnCommand Listeners (i.e Keyboard Shortcut) ---------------
 browser.commands.onCommand.addListener(async (command) => {
     if (command === "open_history") {
-        openHistoryForActiveTab();
+        await openHistoryForActiveTab();
     }
 });
 
 
-async function createContainer(name, password) {
+// --------------- Create Container Function ---------------
+async function createContainer(name) {
+    // Ensure that a name is provided
+    if (!name) {
+        console.error("Trying to create a container with no name!");
+        return false;
+    }
+
     try {
-        if (!name) {
-            console.error("Trying to create a container with no name!");
-            return;
-        }
+        // Create the new container
         const context = await browser.contextualIdentities.create({
             name: name,
             color: "blue",
             icon: "circle"
         });
-        let containerData = {};
-        containerData[context.cookieStoreId] = {
-            profileName: name,
-            password: password,
-            cookieStoreId: context.cookieStoreId
+
+        // Store the container's information
+        const containerData = {
+            [context.cookieStoreId]: {
+                profileName: name,
+                cookieStoreId: context.cookieStoreId
+            }
         };
 
         await browser.storage.local.set(containerData);
-        return true; 
+        return true;
     } catch (error) {
+        // Log any errors that occur during container creation
         console.error("Error in createContainer:", error);
-        return false; 
+        return false;
     }
 }
 
-
-
+// ----------------- History Tracking: onCompleted Listener -----------------
 browser.webNavigation.onCompleted.addListener(async (details) => {
+    // Ignore iframes, extension pages, and new tabs
     if (details.frameId !== 0 || details.url.startsWith('moz-extension:') || details.url === "about:newtab") {
         return;
     }
 
     const tab = await browser.tabs.get(details.tabId);
-
     const containerId = tab.cookieStoreId;
-    // console.log('BACKGROUND-Completed loading for url for profile with id: ', containerId);
-    // Retrieve the profile data from storage
+    
+    // Retrieve the container information
     const storedData = await browser.storage.local.get();
-
-    // Check if the navigation occurred within a known profile container
+    
+    // If the navigation did not occur within a known container, do nothing
     if (!storedData[containerId]) {
-        // console.log("BACKGROUND-Navigation occurred in a non-profile-specific container:", containerId);
-        // console.log('BACKGROUND-This is its id: ', storedData[containerId].cookieStoreId);
-        return;  // Skip recording this navigation
+        return;
     }
-
-    // console.log('BACKGROUND-Navigation occured in PROFILE with id: ', storedData[containerId].cookieStoreId);
-    // console.log('BACKGROUND-Profile assumed named: ', storedData[containerId].profileName);
     
-    let profileName = storedData[containerId].profileName
-    // let profileName = storedData[containerId].profileName || "Unknown Profile";
+    const profileName = storedData[containerId].profileName;
     
+    // Create a new history entry
     const historyEntry = {
         url: tab.url,
         title: tab.title,
         timestamp: Date.now(),
-        profileName: profileName,  // Add profile name to the history entry
-        cookieStoreId: containerId  // Add this line
+        profileName: profileName,
+        cookieStoreId: containerId
     };
 
-    const demoData = await browser.storage.local.get();
-    // console.log("BACKGROUND-Retrived local storage ALL: ", demoData)
-
+    // Retrieve the existing history, if any
     const historyData = await browser.storage.local.get("history");
-    // console.log('BACKGROUND-Retrieved History Data:', historyData);
-    // console.log('\n\n');
     let history = historyData.history || {};
 
+    // Add the new history entry
     history[containerId] = history[containerId] || [];
     history[containerId].push(historyEntry);
     await browser.storage.local.set({ history });
 });
-
-

@@ -1,3 +1,12 @@
+/**
+ * The main popup script.
+ * Most functions are  contained in this file (and the helperFunctions.js file)
+ * However there are certain aspects covered in the background.js file
+ * Those are:
+ * - Creating a new container '(sendMessage(createContainer))'
+ * - Opening the history for the last active tab 'openHistoryForActiveTab()' 
+ */
+
 import {isNameExists, displayError, getExistingProfiles, populateDeleteDropdown, executeProfileDeletion} from './helperFunctions.js'
 
 // --------------- Cached DOM Elements ---------------
@@ -69,7 +78,7 @@ const handleDeleteProfile = async () => {
 
 // --------------- Open History Handlers ---------------
 const handleOpenHistory = () => {
-    openHistoryForActiveTab(); // Assuming this is a function you have defined somewhere
+    openHistoryForActiveTab(); 
 };
 
 
