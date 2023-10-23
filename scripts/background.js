@@ -30,52 +30,85 @@ browser.action.setIcon({ path: "../icons/history-mod.png" });
 // Variable to store the ID of the last active tab
 let lastActiveTabId = null;
 
+const storeName = "history";
+
+// --------------- Open IndexedDB ---------------
+function openDatabase(dbName) {
+    const version = 1;
+    return new Promise((resolve, reject) => {
+        const request = indexedDB.open(dbName, version);
+        // handle requests returned from the database
+        request.onerror = function(event) {
+            console.error("Database error: ", event.target.error);
+            reject(event.target.error);
+        };
+
+        request.onsuccess = function(event) {
+            resolve(event.target.result);
+        };
+
+        request.onupgradeneeded = function(event) {
+            const db = event.target.result;
+            if (!db.objectStoreNames.contains(storeName)) {
+                db.createObjectStore(storeName, { keyPath: "id", autoIncrement: true });
+            }
+        };
+    });
+}
+
+// --------------- Add History Entry to IndexedDB ---------------
+async function addHistoryEntry(dbName, historyEntry) {
+    const db = await openDatabase(dbName);
+    const transaction = db.transaction(storeName, 'readwrite');
+    const objectStore = transaction.objectStore(storeName);
+    const request = objectStore.add(historyEntry);
+    
+    return new Promise((resolve, reject) => {
+        request.onsuccess = () => {
+            resolve();
+        };
+    
+        request.onerror = (event) => {
+            reject(event.target.error);
+        };
+    });
+}
+
 // --------------- onMessage Listener ---------------
-// Handles messages sent from other scripts
 browser.runtime.onMessage.addListener(async (message) => {
     try {
         switch(message.command){
-            // Handle the request to get the last active tab's information
             case "getLastActiveTabInfo":
                 const toSendLastActiveTabId = lastActiveTabId;
-                lastActiveTabId = null; // Reset the lastActiveTabId after sending
+                lastActiveTabId = null;
                 return { tabInfo: toSendLastActiveTabId };
 
-            // Handle the request to create a new container
             case "createContainer":
                 const success = await createContainer(message.name);
                 return { success };
 
-            // Handle unknown commands
             default:
                 console.error('Unknown command received:', message.command);
                 return { success: false, error: 'Unknown command' };
         }
     } catch (error) {
-        // Log any errors that occur during message handling
         console.error('Error handling message:', message, 'Error:', error);
         return { success: false, error: error.message || 'Unknown error' };
     }
 });
 
 // --------------- Open HistoryForActive Function ---------------
-// is a response to a call from popup.js or to the keyboard shortcut (see below and manifest.json)
+// Checks the current tab and opens the history view for its profile!
 async function openHistoryForActiveTab() {
     const [activeTab] = await browser.tabs.query({active: true, currentWindow: true});
-
-    // Check if there is an active tab
     if (activeTab) {
-        // Retrieve the container information for the active tab
         const storedData = await browser.storage.local.get(activeTab.cookieStoreId);
         const profileName = storedData[activeTab.cookieStoreId]?.profileName || "Unknown Profile";
-        
-        // If the active tab is within a known container, store its ID for later use
         if (profileName !== "Unknown Profile") {
             lastActiveTabId = storedData[activeTab.cookieStoreId].cookieStoreId;
         }
     }
     
-    // Open the history view in a new popup window
     browser.windows.create({
         url: browser.runtime.getURL('../views/history.html'),
         type: "popup",
@@ -84,31 +117,27 @@ async function openHistoryForActiveTab() {
     });
 }
 
-// --------------- OnCommand Listeners (i.e Keyboard Shortcut) ---------------
+// --------------- OnCommand Listeners ---------------
 browser.commands.onCommand.addListener(async (command) => {
     if (command === "open_history") {
         await openHistoryForActiveTab();
     }
 });
 
-
 // --------------- Create Container Function ---------------
 async function createContainer(name) {
-    // Ensure that a name is provided
     if (!name) {
         console.error("Trying to create a container with no name!");
         return false;
     }
 
     try {
-        // Create the new container
         const context = await browser.contextualIdentities.create({
             name: name,
             color: "blue",
             icon: "circle"
         });
 
-        // Store the container's information
         const containerData = {
             [context.cookieStoreId]: {
                 profileName: name,
@@ -117,9 +146,19 @@ async function createContainer(name) {
         };
 
         await browser.storage.local.set(containerData);
+        
+        // Try to open database for the container
+        try {
+            const dbName = name; // Use the container's name as the database name
+            // console.log('Trying to create database for container:', name);
+            const db = await openDatabase(dbName);
+            // console.log("Database opened/created successfully for container:", name);
+        } catch (error) {
+            console.error("Error opening/creating database for container:", name, error);
+        }
+        
         return true;
     } catch (error) {
-        // Log any errors that occur during container creation
         console.error("Error in createContainer:", error);
         return false;
     }
@@ -127,7 +166,6 @@ async function createContainer(name) {
 
 // ----------------- History Tracking: onCompleted Listener -----------------
 browser.webNavigation.onCompleted.addListener(async (details) => {
-    // Ignore iframes, extension pages, and new tabs
     if (details.frameId !== 0 || details.url.startsWith('moz-extension:') || details.url === "about:newtab") {
         return;
     }
@@ -135,17 +173,12 @@ browser.webNavigation.onCompleted.addListener(async (details) => {
     const tab = await browser.tabs.get(details.tabId);
     const containerId = tab.cookieStoreId;
     
-    // Retrieve the container information
     const storedData = await browser.storage.local.get();
-    
-    // If the navigation did not occur within a known container, do nothing
     if (!storedData[containerId]) {
         return;
     }
     
     const profileName = storedData[containerId].profileName;
-    
-    // Create a new history entry
     const historyEntry = {
         url: tab.url,
         title: tab.title,
@@ -154,12 +187,13 @@ browser.webNavigation.onCompleted.addListener(async (details) => {
         cookieStoreId: containerId
     };
 
-    // Retrieve the existing history, if any
-    const historyData = await browser.storage.local.get("history");
-    let history = historyData.history || {};
-
-    // Add the new history entry
-    history[containerId] = history[containerId] || [];
-    history[containerId].push(historyEntry);
-    await browser.storage.local.set({ history });
+    // Add history entry to IndexedDB
+    const dbName = profileName;
+    try {
+        // console.log('Trying to add history entry for container:', dbName);
+        await addHistoryEntry(dbName, historyEntry);
+        // console.log("History entry added successfully");
+    } catch (error) {
+        console.error("Error adding history entry:", error);
+    }
 });
