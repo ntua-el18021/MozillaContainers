@@ -1,53 +1,43 @@
 /**
- * This script is run in the background and handles the following:
+ * This script runs in the background, managing container creation, history tracking, and messaging with other scripts.
  * ------------------------------------
- * onMessage Listener: Handles messages sent from other scripts
- * - getLastActiveTabInfo: Returns the last active tab's information
- * - createContainer: Creates a new container
- * 
- * openHistoryForActiveTab: Opens the history view for the last active tab
- * - called from popup.js and keyboard shortcut
- * - opens a new popup window i.e history.html
- * - updates the lastActiveTabId variable to be used in the history.html script
- * 
- * onCommand Listeners: Handles keyboard shortcuts
- * 
- * createContainer: Creates a new container
- * - called from popup.js
- * - creates a new container and stores its information in local storage
- * - returns a boolean indicating success
- * 
- * onCompleted Listener: Handles history tracking
- * - called when a navigation is completed
- * - checks if the navigation occurred within a known container
- * - creates a new history entry and stores it in local storage
- * ------------------------------------ 
+ * Commands:
+ * - getLastActiveTabInfo: Retrieves information about the last active tab.
+ * - createContainer: Creates a new container and stores its credentials.
+ *
+ * Functions:
+ * - openHistoryForActiveTab: Opens the history view for the last active tab.
+ * - createContainer: Creates a new container and stores its information.
+ * - addHistoryEntry: Adds a history entry to the IndexedDB.
+ * - openDatabase: Opens a connection to the IndexedDB.
+ *
+ * Listeners:
+ * - onMessage: Listens for messages from other scripts.
+ * - onCommand: Handles keyboard shortcuts.
+ * - onCompleted: Tracks completed navigations for history.
+ * ------------------------------------
  */
 
-// Set the browser extension icon
 browser.action.setIcon({ path: "../icons/history-mod.png" });
 
-// Variable to store the ID of the last active tab
 let lastActiveTabId = null;
-
 const storeName = "history";
 
-// --------------- Open IndexedDB ---------------
+/**
+ * Opens a connection to the IndexedDB.
+ * @param {string} dbName - The name of the database.
+ * @returns {Promise<IDBDatabase>} A promise that resolves to the IDBDatabase object.
+ */
 function openDatabase(dbName) {
     const version = 1;
     return new Promise((resolve, reject) => {
         const request = indexedDB.open(dbName, version);
-        // handle requests returned from the database
-        request.onerror = function(event) {
+        request.onerror = event => {
             console.error("Database error: ", event.target.error);
             reject(event.target.error);
         };
-
-        request.onsuccess = function(event) {
-            resolve(event.target.result);
-        };
-
-        request.onupgradeneeded = function(event) {
+        request.onsuccess = event => resolve(event.target.result);
+        request.onupgradeneeded = event => {
             const db = event.target.result;
             if (!db.objectStoreNames.contains(storeName)) {
                 db.createObjectStore(storeName, { keyPath: "id", autoIncrement: true });
@@ -56,37 +46,40 @@ function openDatabase(dbName) {
     });
 }
 
-// --------------- Add History Entry to IndexedDB ---------------
+/**
+ * Adds a history entry to the IndexedDB.
+ * @param {string} dbName - The name of the database.
+ * @param {Object} historyEntry - The history entry to add.
+ * @returns {Promise<void>} A promise that resolves when the operation is complete.
+ */
 async function addHistoryEntry(dbName, historyEntry) {
+    console.log('Wait for close 1=>');
     const db = await openDatabase(dbName);
     const transaction = db.transaction(storeName, 'readwrite');
     const objectStore = transaction.objectStore(storeName);
     const request = objectStore.add(historyEntry);
-    
+
     return new Promise((resolve, reject) => {
         request.onsuccess = () => {
             resolve();
         };
-    
-        request.onerror = (event) => {
-            reject(event.target.error);
-        };
+        request.onerror = event => reject(event.target.error);
+    }).finally(() => {
+        console.log('Dataabase closed 1');
+        db.close();
     });
 }
 
-// --------------- onMessage Listener ---------------
-browser.runtime.onMessage.addListener(async (message) => {
+browser.runtime.onMessage.addListener(async message => {
     try {
-        switch(message.command){
+        switch (message.command) {
             case "getLastActiveTabInfo":
-                const toSendLastActiveTabId = lastActiveTabId;
-                lastActiveTabId = null;
-                return { tabInfo: toSendLastActiveTabId };
-
+                const tabInfo = lastActiveTabId;
+                lastActiveTabId = null; // Reset the lastActiveTabId after sending it
+                return { tabInfo };
             case "createContainer":
                 const success = await createContainer(message.name);
                 return { success };
-
             default:
                 console.error('Unknown command received:', message.command);
                 return { success: false, error: 'Unknown command' };
@@ -97,15 +90,13 @@ browser.runtime.onMessage.addListener(async (message) => {
     }
 });
 
-// --------------- Open HistoryForActive Function ---------------
-// Checks the current tab and opens the history view for its profile!
 async function openHistoryForActiveTab() {
-    const [activeTab] = await browser.tabs.query({active: true, currentWindow: true});
+    const [activeTab] = await browser.tabs.query({ active: true, currentWindow: true });
     if (activeTab) {
         const storedData = await browser.storage.local.get(activeTab.cookieStoreId);
         const profileName = storedData[activeTab.cookieStoreId]?.profileName || "Unknown Profile";
         if (profileName !== "Unknown Profile") {
-            lastActiveTabId = storedData[activeTab.cookieStoreId].cookieStoreId;
+            lastActiveTabId = activeTab.cookieStoreId;
         }
     }
     
@@ -117,14 +108,12 @@ async function openHistoryForActiveTab() {
     });
 }
 
-// --------------- OnCommand Listeners ---------------
-browser.commands.onCommand.addListener(async (command) => {
+browser.commands.onCommand.addListener(async command => {
     if (command === "open_history") {
         await openHistoryForActiveTab();
     }
 });
 
-// --------------- Create Container Function ---------------
 async function createContainer(name) {
     if (!name) {
         console.error("Trying to create a container with no name!");
@@ -144,17 +133,19 @@ async function createContainer(name) {
                 cookieStoreId: context.cookieStoreId
             }
         };
-
+        
         await browser.storage.local.set(containerData);
         
-        // Try to open database for the container
+        // Initialize a database for the container
         try {
-            const dbName = name; // Use the container's name as the database name
-            // console.log('Trying to create database for container:', name);
-            const db = await openDatabase(dbName);
-            // console.log("Database opened/created successfully for container:", name);
+            console.log('Wait for close 2=>');
+            const createdDB = await openDatabase(name);
+            createdDB.close();
+            console.log('Dataabase closed 2');
+
         } catch (error) {
             console.error("Error opening/creating database for container:", name, error);
+            return false;
         }
         
         return true;
@@ -164,16 +155,15 @@ async function createContainer(name) {
     }
 }
 
-// ----------------- History Tracking: onCompleted Listener -----------------
-browser.webNavigation.onCompleted.addListener(async (details) => {
+browser.webNavigation.onCompleted.addListener(async details => {
     if (details.frameId !== 0 || details.url.startsWith('moz-extension:') || details.url === "about:newtab") {
         return;
     }
 
     const tab = await browser.tabs.get(details.tabId);
     const containerId = tab.cookieStoreId;
+    const storedData = await browser.storage.local.get(containerId);
     
-    const storedData = await browser.storage.local.get();
     if (!storedData[containerId]) {
         return;
     }
@@ -187,12 +177,8 @@ browser.webNavigation.onCompleted.addListener(async (details) => {
         cookieStoreId: containerId
     };
 
-    // Add history entry to IndexedDB
-    const dbName = profileName;
     try {
-        // console.log('Trying to add history entry for container:', dbName);
-        await addHistoryEntry(dbName, historyEntry);
-        // console.log("History entry added successfully");
+        await addHistoryEntry(profileName, historyEntry);
     } catch (error) {
         console.error("Error adding history entry:", error);
     }

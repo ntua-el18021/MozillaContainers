@@ -36,6 +36,7 @@
   
   // --------------- Fetch History from IndexedDB ---------------
   async function fetchHistoryFromIndexedDB(dbName) {
+    console.log('Opening database 3=>');
     const db = await openDatabase(dbName);
     const transaction = db.transaction('history', 'readonly');
     const objectStore = transaction.objectStore('history');
@@ -43,10 +44,13 @@
   
     return new Promise((resolve, reject) => {
       request.onsuccess = () => {
+        db.close(); // Ensure the database connection is closed after the transaction
+        console.log('Dataabase closed 3');
         resolve(request.result);
       };
   
       request.onerror = (event) => {
+        console.log('Dataabase closed 3');
         reject(event.target.error);
       };
     });
