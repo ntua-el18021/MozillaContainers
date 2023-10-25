@@ -20,18 +20,39 @@ const switchProfileButton = document.getElementById('switchProfile');
 
 
 // --------------- Create Profile Handlers ---------------
+
 const handleCreateProfile = async () => {
-    const profileName = profileNameInput.value.trim();
-    if (!profileName) return displayError("Name must be filled!");
-    if (await isNameExists(profileName)) return displayError("Name already exists!");
+    browser.windows.getCurrent().then((currentWindow) => {
+        const popupWidth = 400;
+        const assumedBookmarksBarHeight = 80; // This is a guess; you might need to adjust
 
-    const response = await browser.runtime.sendMessage({ 
-        command: "createContainer", 
-        name: profileName,
+        const leftPosition = currentWindow.width - popupWidth -50;
+        const topPosition = assumedBookmarksBarHeight;
+
+        browser.windows.create({
+            url: browser.runtime.getURL('../../views/profile.html'),
+            type: "popup",
+            height: 420,
+            width: popupWidth,
+            left: leftPosition,
+            top: topPosition
+        });
     });
-
-    if (response) populateDeleteDropdown();
 }
+
+
+// const handleCreateProfile = async () => {
+//     const profileName = profileNameInput.value.trim();
+//     if (!profileName) return displayError("Name must be filled!");
+//     if (await isNameExists(profileName)) return displayError("Name already exists!");
+
+//     const response = await browser.runtime.sendMessage({ 
+//         command: "createContainer", 
+//         name: profileName,
+//     });
+
+//     if (response) populateDeleteDropdown();
+// }
 
 // --------------- Enter Key Handlers ---------------
 const handleEnterKeyForProfile = (e) => {

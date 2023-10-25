@@ -13,7 +13,7 @@
   ],
 
   "action": {
-    "default_popup": "views/popup.html",
+    "default_popup": "./views/profile.html",
     "default_icon": {
       "16": "icons/history-mod.png",
       "48": "icons/history-mod.png",
@@ -39,7 +39,7 @@
   ,
   "web_accessible_resources": [
     {
-      "resources": ["views/history.html", "scripts/historyPopup/historyPopup.js"],
+      "resources": ["views/history.html", "views/profile.html", "scripts/profilePopup/profilePopup.js", "scripts/historyPopup/historyPopup.js"],
       "matches": ["<all_urls>"]
     }
   ]
