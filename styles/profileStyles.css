@@ -1,123 +1,151 @@
-*:focus {
-    outline: none;
+/* Specify styles for elements with the class profile-card */
+:root {
+    /* Dimensions Variables */
+    --container-width: 320px; /* Control the width here */
+    --leftRightPadding: 15px;
+
+    /* Primary Colors Variables */
+    --primaryBackgroundColor: #42404C;
+    --primaryButtonColor: #2b2a33ba;
+    --dividerColor: 1px solid #ffffff34;
+    --outlineColor: 1px solid #ffffff8b;
+
+    /* Primary Text Color Variables */
+    --textColorPrimary: #ffffff;
+    --textColorSecondary: #fff;
+
+    /* Container List Variables */
+    --iconDimensions: 20px;
+    --iconToTextMargin: 15px;
+    --containerTextFontSize: 16px;
+    --containerListItemsTopMargin: 10px;
+    --containerListItemsBottomMargin: 20px;
+    --totalListElementHeight: calc(var(--iconDimensions) + var(--containerListItemsTopMargin) + var(--containerListItemsBottomMargin));
+
+    /* Create Profile Page Styles */
+
+
 }
 
-/* This will add a bottom border to the title section */
-.title-section {
-    border-bottom: 1px solid rgba(255, 255, 255, 0.2);  /* Light white border with 20% opacity */
-    margin-bottom: 10px;  /* Some spacing after the border */
-    padding-bottom: 10px;  /* Some spacing before the border */
+
+.profile-card {
+    background-color: var(--primaryBackgroundColor);
+    /* padding: 20px; */
+    border-radius: 10px;
+    width: var(--container-width);
+    color: white;
 }
 
-/* This will add a bottom border to the main content section */
-.icons-group {
+
+
+.profile-card .icons-group {
+    /* Styles for .icons-group inside .profile-card */
     border-bottom: 1px solid rgba(255, 255, 255, 0.2);
     margin-bottom: 10px;
     padding-bottom: 10px;
 }
 
-
-body {
-    font-family: 'Arial', sans-serif;
-    background-color: #333;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    width: auto;
-    height: auto;
-    margin: 0;
-    padding: 0;
-    border: none;
-}
-
-.profile-card {
-    background-color: #333;
-    padding: 20px;
-    border-radius: 10px;
-    width: 300px;
-    color: white;
-}
-
-
-
-/* h2 {
+.profile-card h3 {
+    /* Styles for h3 inside .profile-card */
     text-align: center;
-    margin-bottom: 20px;
-} */
-h3 {
-    text-align: center;
-    margin: 0;  /* This ensures there's no extra spacing around the h3 element */
-    padding: 5px 0; /* Add some vertical spacing for better visual balance */
+    margin: 10px 0 20px; /* Adjust margin values as needed */
+    padding: 5px 0;
+
+    border-bottom: var(--dividerColor);
 }
 
-.input-group, .color-group, .icon-group {
+
+.profile-card .input-group{
+    /* Styles for .input-group, .color-group, and .icon-group inside .profile-card */
     margin-bottom: 20px;
-    
+    margin-top: 10px;
+    margin-left: var(--leftRightPadding);
+    margin-right: var(--leftRightPadding);
 }
 
-label {
+.profile-card .color-group,
+.profile-card .icon-group {
+    /* Styles for .input-group, .color-group, and .icon-group inside .profile-card */
+    margin-bottom: 20px;
+    margin-left: var(--leftRightPadding);
+    margin-right: var(--leftRightPadding);
+}
+
+.profile-card label {
     display: block;
     margin-bottom: 10px;
 }
 
-input[type="text"] {
-    width: 95%;
-    /* padding: 10px; */
-    /* border: none; */
+.profile-card input[type="text"] {
+    /* Styles for input[type="text"] inside .profile-card */
+    width: calc(var(--container-width) - 2*var(--leftRightPadding) - 24px);
+    /* width: 70%; */
     border-radius: 5px;
-    background-color: #555;
+    background-color: var(--primaryButtonColor);
     color: white;
     border: 1px solid #ccc;
     padding: 8px 12px;
-    /* border-radius: 4px; */
 }
 
-.colors, .icons {
+.profile-card .colors,
+.profile-card .icons {
+    /* Styles for .colors and .icons inside .profile-card */
     display: flex;
     justify-content: space-between;
     align-items: center;
 }
 
-.color, .icon {
+.profile-card .color,
+.profile-card .icon {
+    /* Styles for .color and .icon inside .profile-card */
     width: 25px;
     height: 25px;
     border-radius: 50%;
     cursor: pointer;
 }
 
-.color.blue { background-color: #3498db; }
-.color.cyan { background-color: #1abc9c; }
-.color.green { background-color: #2ecc71; }
-.color.orange { background-color: #e67e22; }
-.color.red { background-color: #e74c3c; }
-.color.pink { background-color: #e84393; }
-.color.purple { background-color: #9b59b6; }
+.profile-card .color.blue { background-color: #3498db; }
+.profile-card .color.cyan { background-color: #1abc9c; }
+.profile-card .color.green { background-color: #2ecc71; }
+.profile-card .color.orange { background-color: #e67e22; }
+.profile-card .color.red { background-color: #e74c3c; }
+.profile-card .color.pink { background-color: #e84393; }
+.profile-card .color.purple { background-color: #9b59b6; }
 
-.icons .icon {
+.profile-card .icons .icon {
+    /* Styles for .icon inside .icons */
     background-color: #555;
     text-align: center;
     line-height: 25px;
 }
 
-.actions {
+.profile-card .profileActions {
+    /* Styles for .actions inside .profile-card */
     display: flex;
     justify-content: space-between;
+    margin-left: var(--leftRightPadding);
+    margin-right: var(--leftRightPadding);
 }
 
-button {
+.profile-card button {
+    /* Styles for button inside .profile-card */
     padding: 10px 50px;
+    
+    margin-bottom: 10px;
     border: none;
     border-radius: 5px;
     cursor: pointer;
-    width: 145px;  /* Set a fixed width */
-    text-align: center; /* Centers the text */
+    width: 135px;
+    text-align: center;
 }
 
-button.cancel {
-    background-color: #555;
-    color: #fff;  /* This line changes the text color to white */
+.profile-card button.cancel {
+    /* Styles for button.cancel inside .profile-card */
+    background-color: var(--primaryButtonColor);
+    color: #fff;
 }
 
-button.ok {
+.profile-card button.ok {
+    /* Styles for button.ok inside .profile-card */
     background-color: #2ecc71;
 }

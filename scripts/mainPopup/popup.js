@@ -10,6 +10,14 @@
 import {isNameExists, displayError, getExistingProfiles, populateDeleteDropdown, executeProfileDeletion} from './helperFunctions.js'
 
 // --------------- Cached DOM Elements ---------------
+
+const mainView = document.getElementById('popupMainId');
+const createView = document.getElementById('createProfilePageId');
+
+
+
+
+
 const profileNameInput = document.getElementById('profileName');
 const createProfileButton = document.getElementById('createProfile');
 const profileSwitchSelect = document.getElementById('profileSwitchSelect');
@@ -21,24 +29,29 @@ const switchProfileButton = document.getElementById('switchProfile');
 
 // --------------- Create Profile Handlers ---------------
 
-const handleCreateProfile = async () => {
-    browser.windows.getCurrent().then((currentWindow) => {
-        const popupWidth = 400;
-        const assumedBookmarksBarHeight = 80; // This is a guess; you might need to adjust
 
-        const leftPosition = currentWindow.width - popupWidth -50;
-        const topPosition = assumedBookmarksBarHeight;
-
-        browser.windows.create({
-            url: browser.runtime.getURL('../../views/profile.html'),
-            type: "popup",
-            height: 420,
-            width: popupWidth,
-            left: leftPosition,
-            top: topPosition
-        });
-    });
+const handleCreateProfile = () => {
+    mainView.style.display = 'none';
+    createView.style.display = 'block';
 }
+// const handleCreateProfile = async () => {
+//     browser.windows.getCurrent().then((currentWindow) => {
+//         const popupWidth = 400;
+//         const assumedBookmarksBarHeight = 80; // This is a guess; you might need to adjust
+
+//         const leftPosition = currentWindow.width - popupWidth -50;
+//         const topPosition = assumedBookmarksBarHeight;
+
+//         browser.windows.create({
+//             url: browser.runtime.getURL('../../views/profile.html'),
+//             type: "panel",
+//             height: 420,
+//             width: popupWidth,
+//             left: leftPosition,
+//             top: topPosition
+//         });
+//     });
+// }
 
 
 // const handleCreateProfile = async () => {

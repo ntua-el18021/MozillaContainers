@@ -1,0 +1,115 @@
+:root {
+    --container-width: 320px;
+}
+
+/* Alternative Default Content Styles */
+.default-content {
+    display: block;
+    font-family: Arial, sans-serif;
+    background-color: #333; /* making it match the profile card's background */
+    margin: 0;
+    padding: 15px;
+    width: var(--container-width);
+    color: white; /* for text contrast */
+}
+
+.profile-card {
+    display: none;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: #333;
+    padding: 20px;
+    border-radius: 10px;
+    width: 300px;
+    color: white;
+}
+
+.default-content h2, .profile-card h3 {
+    text-align: center;
+    color: white;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+    padding-bottom: 10px;
+    margin-bottom: 20px;
+}
+
+#errorMsg {
+    color: red;
+    display: none;
+    margin-bottom: 15px;
+}
+
+.default-content input[type="text"],
+.default-content select,
+.profile-card input[type="text"] {
+    width: 95%; /* Consistent width for both */
+    padding: 8px 12px;
+    margin: 5px 0;
+    border-radius: 5px;
+    background-color: #555;
+    color: white;
+    border: 1px solid #ccc;
+    box-sizing: border-box;
+}
+
+.default-content button,
+.profile-card button {
+    background-color: #2ecc71; /* Green by default */
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    padding: 10px 15px;
+    cursor: pointer;
+    margin: 10px 0;
+    transition: background-color 0.3s ease;
+    width: 100%; /* full width for default content */
+}
+
+.default-content button:hover,
+.profile-card button:hover {
+    background-color: #27a65a; /* A bit darker on hover */
+}
+
+.default-content #spacer {
+    height: 15px;
+}
+
+/* Color and Icon Styles (Maintained) */
+.colors, .icons {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.color, .icon {
+    width: 25px;
+    height: 25px;
+    border-radius: 50%;
+    cursor: pointer;
+}
+
+.icons .icon {
+    background-color: #555;
+    text-align: center;
+    line-height: 25px;
+}
+
+/* Action Buttons */
+.actions {
+    display: flex;
+    justify-content: space-between;
+}
+
+button.cancel {
+    background-color: #555;
+}
+
+button.ok {
+    background-color: #2ecc71;
+}
+
+.title-section, .icons-group {
+    border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+    margin-bottom: 10px;
+    padding-bottom: 10px;
+}

@@ -1,64 +1,196 @@
 :root {
+    /* Dimensions Variables */
     --container-width: 320px; /* Control the width here */
+    --leftRightPadding: 15px;
+
+    /* Primary Colors Variables */
+    --primaryBackgroundColor: #42404C;
+    --primaryButtonColor: #2b2a33ba;
+    --dividerColor: 1px solid #ffffff34;
+    --outlineColor: 1px solid #ffffff8b;
+
+    /* Primary Text Color Variables */
+    --textColorPrimary: #ffffff;
+    --textColorSecondary: #fff;
+
+    /* Container List Variables */
+    --iconDimensions: 20px;
+    --iconToTextMargin: 15px;
+    --containerTextFontSize: 16px;
+    --containerListItemsTopMargin: 10px;
+    --containerListItemsBottomMargin: 20px;
+    --totalListElementHeight: calc(var(--iconDimensions) + var(--containerListItemsTopMargin) + var(--containerListItemsBottomMargin));
+
+    /* Create Profile Page Styles */
+
+
 }
+/* =============== Main Popup Styles =============== */
+/* ---------------- General Styles ---------------- */
 
 body {
-    font-family: Arial, sans-serif;
-    background-color: #f4f4f4;
+    font-family: "Open Sans", sans-serif;
+    font-style: normal;
+    font-weight: 200; 
+    background-color: var(--primaryBackgroundColor);
     margin: 0;
-    padding: 15px;
     width: var(--container-width);
 }
-
-h2 {
-    color: #333;
-    border-bottom: 2px solid #333;
+.popupMain h3 { 
+    text-align: center;
+    color: var(--textColorPrimary);
+    border-bottom: var(--dividerColor);
     padding-bottom: 10px;
     margin-bottom: 20px;
 }
 
-#errorMsg {
-    color: red;
-    display: none;
-    margin-bottom: 15px;
+/* ---------------- Container Title & Search Styles ----------------*/
+#containersTitleId {
+    font-weight: bold; 
+    color: var(--textColorPrimary);
+    margin-bottom: 10px;
+    margin-left: var(--leftRightPadding);
 }
-
-input[type="text"],
-input[type="password"],
-select {
-    width: 100%;
+#containerSearchId {
+    background-color: var(--primaryButtonColor);
+    color: var(--textColorPrimary);
+    /* width: 70%; */
+    width: calc(var(--container-width) - 2*var(--leftRightPadding));
+    height: 35px;
     padding: 10px;
     margin: 5px 0;
     border-radius: 4px;
-    border: 1px solid #ccc;
+    border: var(--outlineColor);
     box-sizing: border-box;  
+    margin-left: var(--leftRightPadding);
+    margin-right: var(--leftRightPadding);
 }
-
-button {
-    background-color: #333;
-    color: #fff;
-    border: none;
-    border-radius: 4px;
-    padding: 10px 15px;
-    cursor: pointer;
-    margin: 10px 0;
-    transition: background-color 0.3s ease;
-    width: 100%;
-}
-
-button:hover {
-    background-color: #555;
-}
-
-#namesPasswords {
-    display: none;
-    background-color: #f4f4f4;
-    padding: 10px;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-    margin-bottom: 15px;
-}
-
-#spacer {
+#spacerMainId{
     height: 15px;
+    border-bottom: var(--dividerColor);
+    padding-bottom: 10px;
+    margin-bottom: 20px;
 }
+
+/* ---------------- Container List Styles ----------------*/
+.containerList {
+    height: calc(2 * var(--totalListElementHeight)); 
+    overflow-y: auto; 
+    /* border-bottom: var(--dividerColor); */
+    padding-bottom: 30px;
+    margin-bottom: 20px;
+    margin-left: var(--leftRightPadding);
+}
+.containerList > div {
+    display: flex;
+    margin-left: 5px;
+    margin-top: var(--containerListItemsTopMargin);
+    margin-bottom: var(--containerListItemsBottomMargin);
+}
+.containerList > div > img {
+    width: var(--iconDimensions);
+    height: var(--iconDimensions);
+    margin-right: var(--iconToTextMargin);
+}
+.containerList > div > span{
+    color: var(--textColorPrimary);
+    font-size: var(--containerTextFontSize);
+}
+
+
+/*---------------- Action List Styles ----------------*/
+.actions {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+  }
+  
+  .row {
+    display: flex;
+    flex-wrap: nowrap;
+    justify-content: space-between;
+    padding: 4px 0; /* Adjust this for vertical space between rows */
+    width: 100%; 
+  }
+  
+  .row:first-child {
+    margin-top: -10px; /* Adjust this for space above the top row */
+  }
+  
+  .row:last-child {
+    margin-bottom: -10px; /* Adjust this for space below the bottom row */
+  }
+  
+  .column {
+    flex: 50%;
+    display: flex;
+    justify-content: center;
+    padding: 4px 10px; /* Adjust the second value (10px) for horizontal space between icons */
+  }
+  
+  .column img {
+    vertical-align: middle;
+    width: 100px; 
+    height: 100px; 
+  }
+  .column:hover {
+    cursor: pointer;
+  }
+  
+/* Style the tooltips */
+.column {
+    position: relative;
+}
+.column img {
+    vertical-align: middle;
+    width: 100px; 
+    height: 100px; 
+}
+/* ------------ On hover text ------------ */
+.icon-text {
+    display: none;
+    position: absolute;
+    top: 90%; 
+    left: 50%;
+    transform: translateX(-50%);
+    background-color: #343333cf;
+    color: #fff;
+    padding: 5px 10px;
+    border-radius: 4px;
+    white-space: nowrap;
+    opacity: 0;
+    transition: opacity 0.2s;
+    z-index: 1;
+    font-size: 14px; 
+}
+.column:hover .icon-text {
+    display: block;
+    opacity: 1;
+}
+/* -------------- End of Action Icons Grid -------------- */
+
+
+  
+/* ---------------- Manage Profiles Styles ----------------*/
+#manageProfiles {
+    background-color: #2b2a33;
+    color: var(--textColorPrimary);
+    width: calc(var(--container-width) - 2*var(--leftRightPadding));
+    height: 35px;
+    padding: 10px;
+    margin: 5px 0;
+    border: none; /* Remove the border */
+    border-radius: 4px;
+    box-sizing: border-box;
+    margin-left: var(--leftRightPadding);
+    margin-right: var(--leftRightPadding);
+    cursor: pointer; /* Add a pointer cursor on hover to indicate it's clickable */
+    font-weight: 600; /* Make the text bolder */
+}
+
+
+
+/* =============== Create Profile Popup Styles =============== */
+
+
