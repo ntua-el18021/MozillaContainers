@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" style="display: none;">
+  <symbol id="tree-icon" viewBox="0 0 64 64">
+    <path fill="currentColor" d="M32,0C18.148,0,12,23.188,12,32c0,9.656,6.883,17.734,16,19.594V60c0,2.211,1.789,4,4,4s4-1.789,4-4v-8.406
+                    C45.117,49.734,52,41.656,52,32C52,22.891,46.051,0,32,0z"/>
+  </symbol>
+  <!-- Add other icons similarly -->
+</svg>

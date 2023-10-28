@@ -11,19 +11,30 @@
  * - deleteIndexedDBHistory
  * ----------------------------------------------
  */
-
+import { handleSwitchProfile } from "./popup.js";
 // -------------- Helper Functions -------------- 
 async function isNameExists(name) {
     const existingProfiles = await browser.storage.local.get();
     return Object.values(existingProfiles).some(profile => profile.profileName === name);
 }
 
+function displayExistingProfileError(message) {
+    const errorMsg = document.getElementById('profileName');
+    errorMsg.placeholder = message;
+    // errorMsg.style.display = "block"; // Show the error message
 
-function displayError(message) {
-    const errorMsg = document.getElementById('errorMsg');
-    errorMsg.innerText = message;
-    errorMsg.style.display = "block";
+    // Hide the error message after 2 seconds (2000 milliseconds)
+    setTimeout(() => {
+        errorMsg.placeholder= "Profile Name";
+    }, 6000);
 }
+function displayError(message) {
+    console.log(message);
+}
+
+
+
+
 
 
 // -------------- Get Existing Profiles --------------
@@ -33,6 +44,45 @@ const getExistingProfiles = async () => {
         .filter(key => key.startsWith("firefox-container-"))
         .map(key => ({ key, ...existingProfiles[key] }));
 };
+
+
+// ============= Populate Display =============
+const populateContainerList = async () => {
+    const profiles = await getExistingProfiles();
+    console.log('profiles: ', profiles);
+
+    // Get the containerList DOM element
+    const containerList = document.getElementById('containerListId');
+    
+    // Clear the containerList to avoid duplicates
+    containerList.innerHTML = '';
+
+    profiles.forEach(profile => {
+        // Create a new container div
+        let containerDiv = document.createElement('div');
+        containerDiv.setAttribute('data-key', profile.key); // Storing the profile key
+        containerDiv.onclick = () => handleSwitchProfile(profile.key); // Adding click event to switch profile
+
+        // Create the profile icon
+        let imgElement = document.createElement('img');
+        imgElement.src = '../images/tree.png';
+        imgElement.alt = 'Profile Icon';
+
+        // Create the span for profile name
+        let spanElement = document.createElement('span');
+        console.log('Profile name: ', profile.profileName);
+        spanElement.textContent = profile.profileName; // Assuming the profile object has a 'profileName' field
+
+        // Append elements to the container div
+        containerDiv.appendChild(imgElement);
+        containerDiv.appendChild(spanElement);
+
+        // Append the container div to the containerList
+        containerList.appendChild(containerDiv);
+    });
+}
+
+
 
 
 // -------------- Populate Dropdowns --------------
@@ -157,4 +207,4 @@ const deleteIndexedDBHistory = async (profile) => {
 };
 
 
-export {isNameExists, displayError, getExistingProfiles, populateDeleteDropdown, executeProfileDeletion};
+export {isNameExists, displayError, displayExistingProfileError, getExistingProfiles, populateDeleteDropdown, executeProfileDeletion, populateContainerList};

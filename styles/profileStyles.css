@@ -21,65 +21,64 @@
     --containerListItemsTopMargin: 10px;
     --containerListItemsBottomMargin: 20px;
     --totalListElementHeight: calc(var(--iconDimensions) + var(--containerListItemsTopMargin) + var(--containerListItemsBottomMargin));
-
-    /* Create Profile Page Styles */
-
-
 }
 
-
+/* ---------------------- General Styles ---------------------- */
 .profile-card {
     background-color: var(--primaryBackgroundColor);
-    /* padding: 20px; */
     border-radius: 10px;
     width: var(--container-width);
     color: white;
 }
 
-
-
-.profile-card .icons-group {
-    /* Styles for .icons-group inside .profile-card */
-    border-bottom: 1px solid rgba(255, 255, 255, 0.2);
-    margin-bottom: 10px;
-    padding-bottom: 10px;
-}
-
-.profile-card h3 {
-    /* Styles for h3 inside .profile-card */
-    text-align: center;
-    margin: 10px 0 20px; /* Adjust margin values as needed */
-    padding: 5px 0;
-
+/* ---------- */
+.profile-card .profileHeader {
+    display: flex;
+    justify-content: space-between; /* This will push h3 to the center and the back button to the left */
+    align-items: center;
+    position: relative; /* Enable relative positioning for children absolute positioning */
     border-bottom: var(--dividerColor);
 }
 
+.profile-card .backButton {
+    background: none;
+    border: none;
+    color: inherit;
+    font-size: 20px;
+    font-weight: bold;
+    cursor: pointer;
+    position: absolute;
+    left: -40px; /* Adjust as needed to position the button correctly */
+    top: 50%;
+    transform: translateY(-50%); /* Vertically center the button */
+}
 
-.profile-card .input-group{
-    /* Styles for .input-group, .color-group, and .icon-group inside .profile-card */
+.profile-card .backButton:hover {
+    text-decoration: underline;
+}
+
+.profile-card h3 {
+    text-align: center;
+    margin: 10px 0 20px; 
+    padding: 5px 0;
+    flex: 1; /* Allows the h3 to take the maximum available width, ensuring it remains centered */
+}
+
+
+
+/* ---------------------- Profile Name Styles ---------------------- */
+.profile-card .profileName{
     margin-bottom: 20px;
     margin-top: 10px;
     margin-left: var(--leftRightPadding);
     margin-right: var(--leftRightPadding);
 }
-
-.profile-card .color-group,
-.profile-card .icon-group {
-    /* Styles for .input-group, .color-group, and .icon-group inside .profile-card */
-    margin-bottom: 20px;
-    margin-left: var(--leftRightPadding);
-    margin-right: var(--leftRightPadding);
-}
-
 .profile-card label {
     display: block;
     margin-bottom: 10px;
 }
-
 .profile-card input[type="text"] {
-    /* Styles for input[type="text"] inside .profile-card */
     width: calc(var(--container-width) - 2*var(--leftRightPadding) - 24px);
-    /* width: 70%; */
     border-radius: 5px;
     background-color: var(--primaryButtonColor);
     color: white;
@@ -87,23 +86,27 @@
     padding: 8px 12px;
 }
 
+
+/* ---------------------- Colors & Icons Styles ---------------------- */
+.profile-card .colorGroup,
+.profile-card .iconGroup{
+    margin-bottom: 20px;
+    margin-left: var(--leftRightPadding);
+    margin-right: var(--leftRightPadding);
+}
 .profile-card .colors,
 .profile-card .icons {
-    /* Styles for .colors and .icons inside .profile-card */
     display: flex;
     justify-content: space-between;
     align-items: center;
 }
-
-.profile-card .color,
-.profile-card .icon {
-    /* Styles for .color and .icon inside .profile-card */
+.profile-card .color{
     width: 25px;
     height: 25px;
     border-radius: 50%;
     cursor: pointer;
 }
-
+/* -----> Setup Color Dots <------ */
 .profile-card .color.blue { background-color: #3498db; }
 .profile-card .color.cyan { background-color: #1abc9c; }
 .profile-card .color.green { background-color: #2ecc71; }
@@ -112,25 +115,45 @@
 .profile-card .color.pink { background-color: #e84393; }
 .profile-card .color.purple { background-color: #9b59b6; }
 
-.profile-card .icons .icon {
-    /* Styles for .icon inside .icons */
-    background-color: #555;
-    text-align: center;
-    line-height: 25px;
+/* -----> Icons Setup <----- */
+.profile-card .iconsGroup {
+    border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+    margin-bottom: 10px;
+    padding-bottom: 10px;
+    
+}
+.profile-card #Layer_1 {
+    width: 25px; /* Adjust the width as needed */
+    height: 25px; /* Adjust the height as needed */
+    border-radius: 50%; /* To make it circular, similar to the previous icons */
+    cursor: pointer;
+    margin-right: 10px; /* Space between each icon, adjust as needed */
+    /* color: #fb4f05; */
+    /* filter: invert(33%) sepia(100%) saturate(345%) hue-rotate(198deg) brightness(100%) contrast(100%); */
+    --svg-color: #ecebeb; /* This will set the color of the SVG */    
+    --svg-color-2: var(--svg-color); /* This will set the color of the SVG */    
+
 }
 
+/* #Layer {
+    fill: #fb4f05;
+} */
+
+.spacer{
+    margin-bottom: 40px;
+   
+}
+
+
+/* ---------------------- Profile Actions ---------------------- */
 .profile-card .profileActions {
-    /* Styles for .actions inside .profile-card */
     display: flex;
     justify-content: space-between;
     margin-left: var(--leftRightPadding);
     margin-right: var(--leftRightPadding);
 }
-
 .profile-card button {
-    /* Styles for button inside .profile-card */
-    padding: 10px 50px;
-    
+    padding: 10px 50px; 
     margin-bottom: 10px;
     border: none;
     border-radius: 5px;
@@ -138,14 +161,19 @@
     width: 135px;
     text-align: center;
 }
-
 .profile-card button.cancel {
-    /* Styles for button.cancel inside .profile-card */
     background-color: var(--primaryButtonColor);
     color: #fff;
 }
-
 .profile-card button.ok {
-    /* Styles for button.ok inside .profile-card */
     background-color: #2ecc71;
 }
+
+
+
+/* ============= */
+.profile-card #errorMsg{
+    color:#e74c3c;
+}
+
+

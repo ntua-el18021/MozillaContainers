@@ -82,6 +82,7 @@ body {
     margin-left: var(--leftRightPadding);
 }
 .containerList > div {
+    cursor: pointer;
     display: flex;
     margin-left: 5px;
     margin-top: var(--containerListItemsTopMargin);

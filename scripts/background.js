@@ -92,11 +92,14 @@ browser.runtime.onMessage.addListener(async message => {
 
 async function openHistoryForActiveTab() {
     const [activeTab] = await browser.tabs.query({ active: true, currentWindow: true });
+    console.log('activeTab: ', activeTab, ' lastActiveTabId: ', lastActiveTabId);
     if (activeTab) {
         const storedData = await browser.storage.local.get(activeTab.cookieStoreId);
         const profileName = storedData[activeTab.cookieStoreId]?.profileName || "Unknown Profile";
         if (profileName !== "Unknown Profile") {
+            console.log('profileName: ', profileName);
             lastActiveTabId = activeTab.cookieStoreId;
+            console.log('lastActiveTabId: ', lastActiveTabId);
         }
     }
     
