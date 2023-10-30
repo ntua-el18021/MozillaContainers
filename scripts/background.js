@@ -53,7 +53,6 @@ function openDatabase(dbName) {
  * @returns {Promise<void>} A promise that resolves when the operation is complete.
  */
 async function addHistoryEntry(dbName, historyEntry) {
-    console.log('Wait for close 1=>');
     const db = await openDatabase(dbName);
     const transaction = db.transaction(storeName, 'readwrite');
     const objectStore = transaction.objectStore(storeName);
@@ -65,7 +64,6 @@ async function addHistoryEntry(dbName, historyEntry) {
         };
         request.onerror = event => reject(event.target.error);
     }).finally(() => {
-        console.log('Dataabase closed 1');
         db.close();
     });
 }
@@ -92,14 +90,12 @@ browser.runtime.onMessage.addListener(async message => {
 
 async function openHistoryForActiveTab() {
     const [activeTab] = await browser.tabs.query({ active: true, currentWindow: true });
-    console.log('activeTab: ', activeTab, ' lastActiveTabId: ', lastActiveTabId);
+    console.log('Background: openHistoryForActiveTab==> activeTab: ', activeTab, ' lastActiveTabId: ', lastActiveTabId);
     if (activeTab) {
         const storedData = await browser.storage.local.get(activeTab.cookieStoreId);
         const profileName = storedData[activeTab.cookieStoreId]?.profileName || "Unknown Profile";
         if (profileName !== "Unknown Profile") {
-            console.log('profileName: ', profileName);
             lastActiveTabId = activeTab.cookieStoreId;
-            console.log('lastActiveTabId: ', lastActiveTabId);
         }
     }
     
@@ -123,11 +119,6 @@ async function createContainer(name, selectedColor, selectedIcon) {
         return false;
     }
 
-    // Fetch the selected color and icon from the profile creation form
-    // let selectedColor = document.querySelector('.colorGroup .colors .color.selected')?.id || "blue";
-    // let selectedIcon = document.querySelector('.iconGroup .icons .material-icons.selected, .iconGroup .icons .material-symbols-outlined.selected')?.textContent || "fingerprint";
-
-
     try {
         const context = await browser.contextualIdentities.create({
             name: name,
@@ -139,19 +130,16 @@ async function createContainer(name, selectedColor, selectedIcon) {
             [context.cookieStoreId]: {
                 profileName: name,
                 cookieStoreId: context.cookieStoreId,
-                color: selectedColor, // Store the selected color
-                icon: selectedIcon // Store the selected icon
+                color: selectedColor, 
+                icon: selectedIcon 
             }
         };
         
         await browser.storage.local.set(containerData);
         
-        // Initialize a database for the container
         try {
-            console.log('Wait for close 2=>');
             const createdDB = await openDatabase(name);
             createdDB.close();
-            console.log('Dataabase closed 2');
 
         } catch (error) {
             console.error("Error opening/creating database for container:", name, error);
