@@ -12,6 +12,49 @@
  * ----------------------------------------------
  */
 import { handleSwitchProfile } from "./popup.js";
+
+const reversedIconMapping = {
+    "fingerprint": { icon: "fingerprint", class: "material-icons" },
+    "briefcase": { icon: "work", class: "material-icons" },
+    "dollar": { icon: "attach_money", class: "material-icons" },
+    "cart": { icon: "shopping_cart", class: "material-icons" },
+    "vacation": { icon: "flight_takeoff", class: "material-icons" },
+    "gift": { icon: "card_giftcard", class: "material-icons" },
+    "food": { icon: "restaurant", class: "material-icons" },
+    "fruit": { icon: "nutrition", class: "material-symbols-outlined" },
+    "pet": { icon: "pets", class: "material-icons" },
+    "tree": { icon: "park", class: "material-symbols-outlined" },
+    "chill": { icon: "eyeglasses", class: "material-symbols-outlined" },
+    "fence": { icon: "fence", class: "material-symbols-outlined" }
+};
+
+const colorsMapping = {
+    "blue": "#3498db",  // Removed the extra colon
+    "turquoise": "#40E0D0",
+    "green": "#2ecc71",
+    "yellow": "#f1c40f",
+    "orange": "#e67e22",
+    "red": "#e74c3c",
+    "pink": "#e84393",
+    "purple": "#9b59b6"
+};
+
+const iconMapping = {
+    "fingerprint": "fingerprint",
+    "work": "briefcase",
+    "attach_money": "dollar",
+    "shopping_cart": "cart",
+    "flight_takeoff": "vacation",
+    "card_giftcard": "gift",
+    "restaurant": "food",
+    "nutrition": "fruit",
+    "pets": "pet",
+    "park": "tree",
+    "eyeglasses": "chill",
+    "fence": "fence"
+};
+
+
 // -------------- Helper Functions -------------- 
 async function isNameExists(name) {
     const existingProfiles = await browser.storage.local.get();
@@ -47,6 +90,44 @@ const getExistingProfiles = async () => {
 
 
 // ============= Populate Display =============
+
+// const populateContainerList = async () => {
+//     const profiles = await getExistingProfiles();
+//     console.log('profiles: ', profiles);
+
+//     // Get the containerList DOM element
+//     const containerList = document.getElementById('containerListId');
+    
+//     // Clear the containerList to avoid duplicates
+//     containerList.innerHTML = '';
+
+//     profiles.forEach(profile => {
+//         // Create a new container div
+//         let containerDiv = document.createElement('div');
+//         containerDiv.setAttribute('data-key', profile.key); // Storing the profile key
+//         containerDiv.onclick = () => handleSwitchProfile(profile.key); // Adding click event to switch profile
+
+//         // Create the profile icon
+        // let iconElement = document.createElement('i');
+        // let mappedIcon = reversedIconMapping[profile.iconDescription] || 'fingerprint'; // default to 'fingerprint' if iconDescription not found in mapping
+        // iconElement.className = 'material-icons';
+        // iconElement.textContent = mappedIcon;
+
+//         // Create the span for profile name
+//         let spanElement = document.createElement('span');
+//         console.log('Profile name: ', profile.profileName);
+//         spanElement.textContent = profile.profileName; // Assuming the profile object has a 'profileName' field
+
+//         // Append elements to the container div
+//         containerDiv.appendChild(iconElement);
+//         containerDiv.appendChild(spanElement);
+
+//         // Append the container div to the containerList
+//         containerList.appendChild(containerDiv);
+//     });
+// }
+
+
 const populateContainerList = async () => {
     const profiles = await getExistingProfiles();
     console.log('profiles: ', profiles);
@@ -64,9 +145,23 @@ const populateContainerList = async () => {
         containerDiv.onclick = () => handleSwitchProfile(profile.key); // Adding click event to switch profile
 
         // Create the profile icon
-        let imgElement = document.createElement('img');
-        imgElement.src = '../images/tree.png';
-        imgElement.alt = 'Profile Icon';
+        let iconElement = document.createElement('i');
+        let mappedIcon = reversedIconMapping[profile.icon].icon || 'fingerprint';
+        iconElement.className = reversedIconMapping[profile.icon].class;
+        iconElement.textContent = mappedIcon;
+
+        if (profile.color) {
+            iconElement.style.color = colorsMapping[profile.color];
+            console.log('color: ', colorsMapping[profile.color]);
+        }
+
+        let iconWrapper = document.createElement('div');
+        iconWrapper.className = 'icon-wrapper';
+        iconWrapper.appendChild(iconElement);
+
+        // let imgElement = document.createElement('img');
+        // imgElement.src = '../images/tree.png';
+        // imgElement.alt = 'Profile Icon';
 
         // Create the span for profile name
         let spanElement = document.createElement('span');
@@ -74,7 +169,7 @@ const populateContainerList = async () => {
         spanElement.textContent = profile.profileName; // Assuming the profile object has a 'profileName' field
 
         // Append elements to the container div
-        containerDiv.appendChild(imgElement);
+        containerDiv.appendChild(iconWrapper);
         containerDiv.appendChild(spanElement);
 
         // Append the container div to the containerList
@@ -207,4 +302,4 @@ const deleteIndexedDBHistory = async (profile) => {
 };
 
 
-export {isNameExists, displayError, displayExistingProfileError, getExistingProfiles, populateDeleteDropdown, executeProfileDeletion, populateContainerList};
+export {isNameExists, displayError, displayExistingProfileError, getExistingProfiles, populateDeleteDropdown, executeProfileDeletion, populateContainerList, iconMapping};

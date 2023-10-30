@@ -1,0 +1,55 @@
+.profile-card .colorGroup,
+.profile-card .iconGroup{
+    margin-bottom: 20px;
+    margin-left: var(--leftRightPadding);
+    margin-right: var(--leftRightPadding);
+}
+.profile-card .colors,
+.profile-card .icons {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+.profile-card .color{
+    width: 25px;
+    height: 25px;
+    border-radius: 50%;
+    cursor: pointer;
+}
+/* -----> Setup Color Dots <------ */
+.profile-card .color.blue { background-color: #3498db; }
+.profile-card .color.cyan { background-color: #1abc9c; }
+.profile-card .color.green { background-color: #2ecc71; }
+.profile-card .color.orange { background-color: #e67e22; }
+.profile-card .color.red { background-color: #e74c3c; }
+.profile-card .color.pink { background-color: #e84393; }
+.profile-card .color.purple { background-color: #9b59b6; }
+
+/* -----> Icons Setup <----- */
+.profile-card .iconsGroup {
+    border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+    margin-bottom: 10px;
+    padding-bottom: 10px;
+    
+}
+.profile-card #Layer_1 {
+    width: 25px; /* Adjust the width as needed */
+    height: 25px; /* Adjust the height as needed */
+    border-radius: 50%; /* To make it circular, similar to the previous icons */
+    cursor: pointer;
+    margin-right: 10px; /* Space between each icon, adjust as needed */
+    /* color: #fb4f05; */
+    /* filter: invert(33%) sepia(100%) saturate(345%) hue-rotate(198deg) brightness(100%) contrast(100%); */
+    --svg-color: #ecebeb; /* This will set the color of the SVG */    
+    --svg-color-2: var(--svg-color); /* This will set the color of the SVG */    
+
+}
+
+/* #Layer {
+    fill: #fb4f05;
+} */
+
+.spacer{
+    margin-bottom: 40px;
+   
+}

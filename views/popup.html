@@ -4,6 +4,8 @@
 <head>
     <link rel="stylesheet" href="../styles/popupStyles.css">
     <link rel="stylesheet" href="../styles/profileStyles.css">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
 
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -12,11 +14,9 @@
 
 <body>
 
-    <div class="popupMain"id="popupMainId" style="display:block;">
+    <div class="popupMain"id="popupMainId" style="display:none;">
 
         <h3>History under Control</h3>
-        
-        <!-- Actions Icons Grid-->
         <div class="actions">
             <div class="row">
                 <div class="column">
@@ -41,37 +41,11 @@
         </div>
         <div id="spacerMainId"></div>
         
-        <!-- Containers select options and search -->
+        
         <span id="containersTitleId">Containers</span>
         <input type="text" id="containerSearchId" placeholder="Search for containers...">
 
-        <!-- Containers List -->
-        <div class="containerList" id="containerListId">
-            <!-- <div>
-                <img src="../images/tree.png" alt="Icon 1">
-                <span>Container 1</span>
-            </div>
-            <div>
-                <img src="../images/suitcase.png" alt="Icon 2">
-                <span>Container 2</span>
-            </div>
-            <div>
-                <img src="../images/dot.png" alt="Icon 3">
-                <span>Container 3</span>
-            </div>
-            <div>
-                <img src="../images/tree.png" alt="Icon 1">
-                <span>Container 1</span>
-            </div>
-            <div>
-                <img src="../images/suitcase.png" alt="Icon 2">
-                <span>Container 2</span>
-            </div>
-            <div>
-                <img src="../images/dot.png" alt="Icon 3">
-                <span>Container 3</span>
-            </div> -->
-        </div>
+        <div class="containerList" id="containerListId"></div>
 
         <button id="manageProfiles">Manage Profiles</button>
     </div>
@@ -79,84 +53,70 @@
 
 
 
-    <div class="profile-card" id="createProfilePageId" style="display:none ;">
+    <div class="profile-card" id="createProfilePageId" style="display:block ;">
 
-        <div class="profileHeader"> <!-- Adding a wrapper for the header content -->
-            <button class="backButton" id="backButtonId">&lt;</button> <!-- This is the back button -->
+        <div class="profileHeader"> 
+            <button class="backButton" id="backButtonId">&lt;</button>
             <h3>New Profile</h3>
         </div>
-
-    
         <div class="profileName">
-            
-            
-
             <label for="name">Name</label>
             <input type="text" id="profileName" placeholder="Profile Name">
         </div>
-        <div class="colorGroup">
-            <label>Color</label>
-            <div class="colors">
-                <span class="color blue"></span>
-                <span class="color cyan"></span>
-                <span class="color green"></span>
-                <span class="color orange"></span>
-                <span class="color red"></span>
-                <span class="color pink"></span>
-                <span class="color purple"></span>
+        <div class="colorGroup" >
+            <label for="profileColor">Profile Color:</label>
+            <div class="colors" >
+                <div class="colorWrapper" >
+                    <div class="colorBehind" ></div>
+                    <div class="color blue" tabindex="0" id="blue"></div>
+                </div>
+                <div class="colorWrapper">
+                    <div class="colorBehind"></div>
+                    <div class="color turquoise" tabindex="0" id="turquoise"></div>
+                </div>
+                <div class="colorWrapper">
+                    <div class="colorBehind"></div>
+                    <div class="color green" tabindex="0"id="green"></div>
+                </div>
+                <div class="colorWrapper">
+                    <div class="colorBehind"></div>
+                    <div class="color yellow" tabindex="0"id="yellow"></div>
+                </div>
+                <div class="colorWrapper">
+                    <div class="colorBehind"></div>
+                    <div class="color orange" tabindex="0"id="orange"></div>
+                </div>
+                <div class="colorWrapper">
+                    <div class="colorBehind"></div>
+                    <div class="color red" tabindex="0"id="red"></div>
+                </div>
+                <div class="colorWrapper">
+                    <div class="colorBehind"></div>
+                    <div class="color pink" tabindex="0"id="pink"></div>
+                </div>
+                <div class="colorWrapper">
+                    <div class="colorBehind"></div>
+                    <div class="color purple" tabindex="0"id="purple"></div>
+                </div>
             </div>
         </div>
 
-
         <div class="iconGroup">
-            <label>Icon</label>
+            <label for="profileIcon">Profile Icon:</label>
             <div class="icons">
-                <svg version="1.0" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" 
-                    width="800px" height="800px" viewBox="0 0 64 64" enable-background="new 0 0 64 64" xml:space="preserve">
-                    <path fill="var(--svg-color)" d="M32,0C18.148,0,12,23.188,12,32c0,9.656,6.883,17.734,16,19.594V60c0,2.211,1.789,4,4,4s4-1.789,4-4v-8.406
-                        C45.117,49.734,52,41.656,52,32C52,22.891,46.051,0,32,0z"/>
-                </svg>
-                
-                 <svg version="1.0" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" 
-                    width="800px" height="800px" viewBox="0 0 64 64" enable-background="new 0 0 64 64" xml:space="preserve">
-                    <path fill="var(--svg-color)" d="M56,0H8C5.789,0,4,1.789,4,4v52c0,4.418,3.582,8,8,8h40h4c2.211,0,4-1.789,4-4V4C60,1.789,58.211,0,56,0z
-                    M52,56H16c-2.211,0-4-1.789-4-4s1.789-4,4-4h36V56z"/>
-                </svg>
-
-                <svg version="1.0" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" 
-                    width="800px" height="800px" viewBox="0 0 64 64" enable-background="new 0 0 64 64" xml:space="preserve">
-                    <g>
-                        <path fill="var(--svg-color-2)" d="M0,32v20c0,2.211,1.789,4,4,4h56c2.211,0,4-1.789,4-4V32H0z M24,44h-8c-2.211,0-4-1.789-4-4s1.789-4,4-4h8
-                            c2.211,0,4,1.789,4,4S26.211,44,24,44z"/>
-                        <path fill="var(--svg-color)" d="M64,24V12c0-2.211-1.789-4-4-4H4c-2.211,0-4,1.789-4,4v12H64z"/>
-                    </g>
-                </svg>
-
-                <svg version="1.0" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" 
-                    width="800px" height="800px" viewBox="0 0 64 64" enable-background="new 0 0 64 64" xml:space="preserve">
-                    <path fill="var(--svg-color)" d="M56,32.734V24C56,10.746,45.254,0,32,0S8,10.746,8,24v8.734C3.348,34.387,0,38.781,0,44v8
-                        c0,6.629,5.371,12,12,12h8c2.211,0,4-1.789,4-4V36c0-2.211-1.789-4-4-4h-4v-8c0-8.836,7.164-16,16-16s16,7.164,16,16v8h-4
-                        c-2.211,0-4,1.789-4,4v24c0,2.211,1.789,4,4,4h8c6.629,0,12-5.371,12-12v-8C64,38.781,60.652,34.387,56,32.734z"/>
-                </svg>
-
-                <svg version="1.0" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" 
-                        width="800px" height="800px" viewBox="0 0 64 64" enable-background="new 0 0 64 64" xml:space="preserve">
-                    <path fill="var(--svg-color)" d="M56,0H8C5.789,0,4,1.789,4,4v56c0,2.211,1.789,4,4,4h20V48h8v16h20c2.211,0,4-1.789,4-4V4
-                        C60,1.789,58.211,0,56,0z M28,40h-8v-8h8V40z M28,24h-8v-8h8V24z M44,40h-8v-8h8V40z M44,24h-8v-8h8V24z"/>
-                </svg>
-
-                <svg version="1.0" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" 
-                        width="800px" height="800px" viewBox="0 0 64 64" enable-background="new 0 0 64 64" xml:space="preserve">
-                    <path fill="var(--svg-color)" d="M32,0c-7.395,0-14.18,2.531-19.602,6.742L6.984,1.328C5.422-0.234,2.781-0.348,1.219,1.219
-                        c-1.562,1.562-1.453,4.203,0.109,5.766l5.414,5.414C2.531,17.82,0,24.605,0,32c0,17.672,14.328,32,32,32s32-14.328,32-32
-                        S49.672,0,32,0z M32,48c-8.836,0-16-7.164-16-16c0-2.961,0.859-5.703,2.262-8.078l6.035,6.031C24.121,30.609,24,31.289,24,32
-                        c0,4.418,3.582,8,8,8s8-3.582,8-8s-3.582-8-8-8c-0.711,0-1.391,0.125-2.047,0.297l-6.035-6.031C26.297,16.859,29.039,16,32,16
-                        c8.836,0,16,7.164,16,16S40.836,48,32,48z"/>
-                </svg>
-
-
+                <i class="material-icons" tabindex="0">fingerprint</i>    
+                <i class="material-icons" tabindex="0">work</i>          
+                <i class="material-icons" tabindex="0">attach_money</i>   
+                <i class="material-icons" tabindex="0">shopping_cart</i>  
+                <i class="material-icons" tabindex="0">flight_takeoff</i> 
+                <i class="material-icons" tabindex="0">card_giftcard</i>  
+                <i class="material-icons" tabindex="0">restaurant</i>     
+                <i class="material-symbols-outlined" tabindex="0">nutrition</i>
+                <i class="material-icons" tabindex="0">pets</i>          
+                <i class="material-symbols-outlined" tabindex="0">park</i>
+                <i class="material-symbols-outlined" tabindex="0">eyeglasses</i>
+                <i class="material-symbols-outlined" tabindex="0">fence</i>
             </div>
-            <div class="spacer"></div>
         </div>
         
         <div class="profileActions">

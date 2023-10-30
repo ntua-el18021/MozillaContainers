@@ -78,7 +78,7 @@ browser.runtime.onMessage.addListener(async message => {
                 lastActiveTabId = null; // Reset the lastActiveTabId after sending it
                 return { tabInfo };
             case "createContainer":
-                const success = await createContainer(message.name);
+                const success = await createContainer(message.name, message.color, message.icon);
                 return { success };
             default:
                 console.error('Unknown command received:', message.command);
@@ -117,23 +117,30 @@ browser.commands.onCommand.addListener(async command => {
     }
 });
 
-async function createContainer(name) {
+async function createContainer(name, selectedColor, selectedIcon) {
     if (!name) {
         console.error("Trying to create a container with no name!");
         return false;
     }
 
+    // Fetch the selected color and icon from the profile creation form
+    // let selectedColor = document.querySelector('.colorGroup .colors .color.selected')?.id || "blue";
+    // let selectedIcon = document.querySelector('.iconGroup .icons .material-icons.selected, .iconGroup .icons .material-symbols-outlined.selected')?.textContent || "fingerprint";
+
+
     try {
         const context = await browser.contextualIdentities.create({
             name: name,
-            color: "blue",
-            icon: "circle"
+            color: selectedColor,
+            icon: selectedIcon
         });
 
         const containerData = {
             [context.cookieStoreId]: {
                 profileName: name,
-                cookieStoreId: context.cookieStoreId
+                cookieStoreId: context.cookieStoreId,
+                color: selectedColor, // Store the selected color
+                icon: selectedIcon // Store the selected icon
             }
         };
         

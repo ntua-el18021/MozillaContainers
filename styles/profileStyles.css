@@ -21,6 +21,8 @@
     --containerListItemsTopMargin: 10px;
     --containerListItemsBottomMargin: 20px;
     --totalListElementHeight: calc(var(--iconDimensions) + var(--containerListItemsTopMargin) + var(--containerListItemsBottomMargin));
+
+    --colorDotSize: 16px;
 }
 
 /* ---------------------- General Styles ---------------------- */
@@ -30,8 +32,6 @@
     width: var(--container-width);
     color: white;
 }
-
-/* ---------- */
 .profile-card .profileHeader {
     display: flex;
     justify-content: space-between; /* This will push h3 to the center and the back button to the left */
@@ -39,7 +39,6 @@
     position: relative; /* Enable relative positioning for children absolute positioning */
     border-bottom: var(--dividerColor);
 }
-
 .profile-card .backButton {
     background: none;
     border: none;
@@ -52,18 +51,15 @@
     top: 50%;
     transform: translateY(-50%); /* Vertically center the button */
 }
-
 .profile-card .backButton:hover {
     text-decoration: underline;
 }
-
 .profile-card h3 {
     text-align: center;
     margin: 10px 0 20px; 
     padding: 5px 0;
     flex: 1; /* Allows the h3 to take the maximum available width, ensuring it remains centered */
 }
-
 
 
 /* ---------------------- Profile Name Styles ---------------------- */
@@ -87,63 +83,90 @@
 }
 
 
-/* ---------------------- Colors & Icons Styles ---------------------- */
-.profile-card .colorGroup,
-.profile-card .iconGroup{
-    margin-bottom: 20px;
+/* ---------------------- Color Dots Styles ---------------------- */
+.profile-card .colorGroup {
+    margin-bottom: 30px;
     margin-left: var(--leftRightPadding);
     margin-right: var(--leftRightPadding);
 }
-.profile-card .colors,
-.profile-card .icons {
+.profile-card .colors {
+    box-sizing: border-box;
     display: flex;
-    justify-content: space-between;
+    justify-content: space-around;  
     align-items: center;
 }
-.profile-card .color{
-    width: 25px;
-    height: 25px;
-    border-radius: 50%;
-    cursor: pointer;
+.profile-card .colorWrapper {
+    margin: 0;
+    display: inline-block;
+    position: relative;
 }
-/* -----> Setup Color Dots <------ */
+.profile-card .color {
+    position: relative;
+    box-sizing: border-box;
+    border-radius: 50%;
+    width: var(--colorDotSize); 
+    height: var(--colorDotSize);
+    cursor: pointer;
+    z-index: 1;
+}
+.profile-card .colorBehind {
+    position: absolute;
+    border: 1.5px solid transparent;
+    background-color: transparent;
+    width: calc(var(--colorDotSize) + 6px);
+    height: calc(var(--colorDotSize) + 6px);
+    border-radius: 50%;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 0;
+}
+.profile-card .colorBehind.selected {
+    background-color: #28272e;
+}
+
 .profile-card .color.blue { background-color: #3498db; }
-.profile-card .color.cyan { background-color: #1abc9c; }
+.profile-card .color.turquoise { background-color: #40E0D0; }
 .profile-card .color.green { background-color: #2ecc71; }
+.profile-card .color.yellow { background-color: #f1c40f; }
 .profile-card .color.orange { background-color: #e67e22; }
 .profile-card .color.red { background-color: #e74c3c; }
 .profile-card .color.pink { background-color: #e84393; }
 .profile-card .color.purple { background-color: #9b59b6; }
 
-/* -----> Icons Setup <----- */
-.profile-card .iconsGroup {
-    border-bottom: 1px solid rgba(255, 255, 255, 0.2);
-    margin-bottom: 10px;
-    padding-bottom: 10px;
+
+
+/* ---------------------- Icon Styles ---------------------- */
+.profile-card .iconGroup {
+    margin-bottom: 30px;
+    margin-left: var(--leftRightPadding);
+    margin-right: var(--leftRightPadding);
+}
+.profile-card .icons {
     
-}
-.profile-card #Layer_1 {
-    width: 25px; /* Adjust the width as needed */
-    height: 25px; /* Adjust the height as needed */
-    border-radius: 50%; /* To make it circular, similar to the previous icons */
+    display: grid;
+    grid-template-columns: repeat(6, 1fr); /* Creates 2 equally sized columns */
+    gap: 20px; 
+    align-items: center;
     cursor: pointer;
-    margin-right: 10px; /* Space between each icon, adjust as needed */
-    /* color: #fb4f05; */
-    /* filter: invert(33%) sepia(100%) saturate(345%) hue-rotate(198deg) brightness(100%) contrast(100%); */
-    --svg-color: #ecebeb; /* This will set the color of the SVG */    
-    --svg-color-2: var(--svg-color); /* This will set the color of the SVG */    
-
+}
+.profile-card .material-icons, 
+.profile-card .material-symbols-outlined {
+    padding: 1.5px;
+    border-radius: 50%;
+    margin: 3px; /* Adjusted margin for spacing */
+    font-size: 22px; /* Set the icon size */
 }
 
-/* #Layer {
-    fill: #fb4f05;
-} */
 
-.spacer{
-    margin-bottom: 40px;
-   
+.material-icons, .material-symbols-outlined {
+    outline: 1.5px solid transparent; 
+    background-color: transparent;
+    border-radius: 50%;
 }
-
+.material-icons.selected, .material-symbols-outlined.selected {
+    background-color: #28272e;
+}
 
 /* ---------------------- Profile Actions ---------------------- */
 .profile-card .profileActions {
@@ -170,8 +193,7 @@
 }
 
 
-
-/* ============= */
+/* ---------------------- Error Message ---------------------- */
 .profile-card #errorMsg{
     color:#e74c3c;
 }

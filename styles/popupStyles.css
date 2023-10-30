@@ -1,6 +1,6 @@
 :root {
     /* Dimensions Variables */
-    --container-width: 320px; /* Control the width here */
+    --container-width: 320px; 
     --leftRightPadding: 15px;
 
     /* Primary Colors Variables */
@@ -21,13 +21,10 @@
     --containerListItemsBottomMargin: 20px;
     --totalListElementHeight: calc(var(--iconDimensions) + var(--containerListItemsTopMargin) + var(--containerListItemsBottomMargin));
 
-    /* Create Profile Page Styles */
-
-
 }
-/* =============== Main Popup Styles =============== */
-/* ---------------- General Styles ---------------- */
 
+
+/* ---------------- General Styles ---------------- */
 body {
     font-family: "Open Sans", sans-serif;
     font-style: normal;
@@ -43,6 +40,7 @@ body {
     padding-bottom: 10px;
     margin-bottom: 20px;
 }
+
 
 /* ---------------- Container Title & Search Styles ----------------*/
 #containersTitleId {
@@ -72,30 +70,33 @@ body {
     margin-bottom: 20px;
 }
 
+
 /* ---------------- Container List Styles ----------------*/
 .containerList {
     height: calc(2 * var(--totalListElementHeight)); 
     overflow-y: auto; 
-    /* border-bottom: var(--dividerColor); */
     padding-bottom: 30px;
     margin-bottom: 20px;
     margin-left: var(--leftRightPadding);
 }
 .containerList > div {
     cursor: pointer;
+    align-items: center; /* This will vertically center the child elements */
     display: flex;
     margin-left: 5px;
     margin-top: var(--containerListItemsTopMargin);
     margin-bottom: var(--containerListItemsBottomMargin);
 }
-.containerList > div > img {
-    width: var(--iconDimensions);
-    height: var(--iconDimensions);
-    margin-right: var(--iconToTextMargin);
-}
 .containerList > div > span{
+    line-height: 1;
     color: var(--textColorPrimary);
     font-size: var(--containerTextFontSize);
+}
+.containerList .icon-wrapper {
+    margin-right: var(--iconToTextMargin);
+}
+.containerList .icon-wrapper > i{
+    vertical-align: middle; 
 }
 
 
@@ -111,23 +112,23 @@ body {
     display: flex;
     flex-wrap: nowrap;
     justify-content: space-between;
-    padding: 4px 0; /* Adjust this for vertical space between rows */
+    padding: 4px 0; 
     width: 100%; 
   }
   
   .row:first-child {
-    margin-top: -10px; /* Adjust this for space above the top row */
+    margin-top: -10px; 
   }
   
   .row:last-child {
-    margin-bottom: -10px; /* Adjust this for space below the bottom row */
+    margin-bottom: -10px; 
   }
   
   .column {
     flex: 50%;
     display: flex;
     justify-content: center;
-    padding: 4px 10px; /* Adjust the second value (10px) for horizontal space between icons */
+    padding: 4px 10px;
   }
   
   .column img {
@@ -139,7 +140,8 @@ body {
     cursor: pointer;
   }
   
-/* Style the tooltips */
+
+/* -------------- Icon Grid: Style the tooltips --------------*/
 .column {
     position: relative;
 }
@@ -148,7 +150,6 @@ body {
     width: 100px; 
     height: 100px; 
 }
-/* ------------ On hover text ------------ */
 .icon-text {
     display: none;
     position: absolute;
@@ -169,8 +170,6 @@ body {
     display: block;
     opacity: 1;
 }
-/* -------------- End of Action Icons Grid -------------- */
-
 
   
 /* ---------------- Manage Profiles Styles ----------------*/
@@ -189,9 +188,3 @@ body {
     cursor: pointer; /* Add a pointer cursor on hover to indicate it's clickable */
     font-weight: 600; /* Make the text bolder */
 }
-
-
-
-/* =============== Create Profile Popup Styles =============== */
-
-
