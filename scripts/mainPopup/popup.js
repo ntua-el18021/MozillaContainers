@@ -7,13 +7,12 @@
  * - Opening the history for the last active tab 'openHistoryForActiveTab()' 
  */
 
-import {isNameExists, displayError,displayExistingProfileError, getExistingProfiles, populateDeleteDropdown, executeProfileDeletion, populateContainerList, iconMapping} from './helperFunctions.js'
-import {handleProfileCardFocusIn, handleProfileCardFocusOut, handleProfileCardClick} from './handlerFunctions.js'
+import {isNameExists, displayError,displayExistingProfileError, getExistingProfiles, executeProfileDeletion, populateContainerList, iconMapping} from './helperFunctions.js'
+import {handleProfileCardFocusIn, handleProfileCardFocusOut, handleProfileCardClick} from './profileViewHandlerFunctions.js'
 
 
  
 // --------------- Cached DOM Elements ---------------
-
 const mainView = document.getElementById('popupMainId');
 const createView = document.getElementById('createProfilePageId');
 
@@ -66,9 +65,6 @@ const handleCreateProfile = async () => {
     const selectedIcon = selectedIconElement ? selectedIconElement.textContent : "fingerprint"; // Using the icon's text content
     const containerIcon = iconMapping[selectedIcon];
 
-    console.log('==> Selected values: ', containerIcon, ' ', containerIcon);
-
-
     const response = await browser.runtime.sendMessage({ 
         command: "createContainer", 
         name: profileName,
@@ -94,10 +90,8 @@ const handleEnterKeyForProfile = (e) => {
 // --------------- Switch Profile Handlers ---------------
 const handleSwitchProfile = async (profileKey) => {
     const profiles = await getExistingProfiles();
-
     if (profiles.length === 0) return displayError("No profiles to switch!");
     if (!profileKey) return displayError("Please select a profile to switch.");
-
     try {
         await browser.tabs.create({
             cookieStoreId: profiles.find(profile => profile.key === profileKey).cookieStoreId
@@ -111,7 +105,6 @@ const handleSwitchProfile = async (profileKey) => {
 
 // --------------- Delete Profile Handlers ---------------
 const handleDeleteProfile = async () => {
-    console.log('Deleting profiles');
     // const selectedProfileKey = profileDeleteSelect.value;
     const selectedProfileKey = "allProfiles";
     const profiles = await getExistingProfiles();
@@ -129,11 +122,11 @@ const handleDeleteProfile = async () => {
     }
 };
 
+
 // --------------- Open History Handlers ---------------
 const handleOpenHistory = async () => {
    await openHistoryForActiveTab(); 
 };
-
 
 
 // ----------------- Views Event Handlers -----------------

@@ -1,7 +1,6 @@
-/* Specify styles for elements with the class profile-card */
 :root {
     /* Dimensions Variables */
-    --container-width: 320px; /* Control the width here */
+    --container-width: 320px; 
     --leftRightPadding: 15px;
 
     /* Primary Colors Variables */
@@ -23,6 +22,8 @@
     --totalListElementHeight: calc(var(--iconDimensions) + var(--containerListItemsTopMargin) + var(--containerListItemsBottomMargin));
 
     --colorDotSize: 16px;
+    --iconSize: 18px;
+    --borderOutlineColor: 1px solid #74f3ed;
 }
 
 /* ---------------------- General Styles ---------------------- */
@@ -34,9 +35,9 @@
 }
 .profile-card .profileHeader {
     display: flex;
-    justify-content: space-between; /* This will push h3 to the center and the back button to the left */
+    justify-content: space-between; 
     align-items: center;
-    position: relative; /* Enable relative positioning for children absolute positioning */
+    position: relative; 
     border-bottom: var(--dividerColor);
 }
 .profile-card .backButton {
@@ -47,9 +48,9 @@
     font-weight: bold;
     cursor: pointer;
     position: absolute;
-    left: -40px; /* Adjust as needed to position the button correctly */
+    left: -40px; 
     top: 50%;
-    transform: translateY(-50%); /* Vertically center the button */
+    transform: translateY(-50%);
 }
 .profile-card .backButton:hover {
     text-decoration: underline;
@@ -58,7 +59,7 @@
     text-align: center;
     margin: 10px 0 20px; 
     padding: 5px 0;
-    flex: 1; /* Allows the h3 to take the maximum available width, ensuring it remains centered */
+    flex: 1; 
 }
 
 
@@ -80,6 +81,10 @@
     color: white;
     border: 1px solid #ccc;
     padding: 8px 12px;
+}
+.profile-card input[type="text"]:focus {
+    outline: none;
+    border: var(--borderOutlineColor);
 }
 
 
@@ -142,31 +147,38 @@
     margin-left: var(--leftRightPadding);
     margin-right: var(--leftRightPadding);
 }
-.profile-card .icons {
-    
+.profile-card .icons { 
     display: grid;
-    grid-template-columns: repeat(6, 1fr); /* Creates 2 equally sized columns */
+    grid-template-columns: repeat(6, 1fr); 
     gap: 20px; 
-    align-items: center;
     cursor: pointer;
+
+    justify-items: center;
+    align-items: center;
+    
 }
 .profile-card .material-icons, 
 .profile-card .material-symbols-outlined {
     padding: 1.5px;
     border-radius: 50%;
-    margin: 3px; /* Adjusted margin for spacing */
-    font-size: 22px; /* Set the icon size */
-}
+    /* padding: 0; */
+    margin: 0;
+    font-size: var(--iconSize);
 
-
-.material-icons, .material-symbols-outlined {
-    outline: 1.5px solid transparent; 
+    border: 1.5px solid transparent; 
     background-color: transparent;
     border-radius: 50%;
+
+    padding: 3px;
+    box-sizing: border-box;
+
+    
 }
+
 .material-icons.selected, .material-symbols-outlined.selected {
     background-color: #28272e;
 }
+
 
 /* ---------------------- Profile Actions ---------------------- */
 .profile-card .profileActions {
