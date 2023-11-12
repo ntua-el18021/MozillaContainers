@@ -35,11 +35,12 @@
         },
         "description": "Open Profile History"
     }
-  }
-  ,
+  },
+
+
   "web_accessible_resources": [
     {
-      "resources": ["views/history.html", "views/profile.html", "scripts/profilePopup/profilePopup.js", "scripts/historyPopup/historyPopup.js"],
+      "resources": ["views/history.html", "views/profile.html", "scripts/profilePopup/profilePopup.js", "scripts/historyPopup/historyPopup.js", "./scripts/profilePopup/profilePopup.js", "./scripts/mainPopup/helperFunctions.js"],
       "matches": ["<all_urls>"]
     }
   ]

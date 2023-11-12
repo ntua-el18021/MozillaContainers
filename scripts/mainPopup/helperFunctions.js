@@ -76,7 +76,7 @@ function displayExistingProfileError(message) {
     }, 6000);
 }
 function displayError(message) {
-    console.log(message);
+    console.log('Displaying error: ', message);
 }
 
 
@@ -98,7 +98,6 @@ const populateContainerList = async () => {
 
         if (profile.color) {
             iconElement.style.color = colorsMapping[profile.color];
-            console.log('color: ', colorsMapping[profile.color]);
         }
 
         let iconWrapper = document.createElement('div');
@@ -106,7 +105,6 @@ const populateContainerList = async () => {
         iconWrapper.appendChild(iconElement);
 
         let spanElement = document.createElement('span');
-        console.log('Profile name: ', profile.profileName);
         spanElement.textContent = profile.profileName; 
 
         containerDiv.appendChild(iconWrapper);
@@ -179,7 +177,6 @@ const executeProfileDeletion = async (selectedProfileKey, profiles) => {
 
 const deleteIndexedDBHistory = async (profile) => {
     const dbName = profile.profileName;
-    console.log('Deleting IndexedDB database:', dbName);
     return new Promise((resolve, reject) => {
         const request = indexedDB.deleteDatabase(dbName);
         request.onsuccess = () => {

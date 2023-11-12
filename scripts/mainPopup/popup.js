@@ -13,6 +13,9 @@ import {handleProfileCardFocusIn, handleProfileCardFocusOut, handleProfileCardCl
 
  
 // --------------- Cached DOM Elements ---------------
+
+const profileCardElements = document.getElementById('createProfilePageId');
+
 const mainView = document.getElementById('popupMainId');
 const createView = document.getElementById('createProfilePageId');
 
@@ -57,8 +60,14 @@ const handleCreateProfile = async () => {
 
     // Capture the selected color
     const selectedColorBehindElement = document.querySelector('.colorGroup .colors .colorWrapper .colorBehind.selected');
-    const associatedColorElement = selectedColorBehindElement ? selectedColorBehindElement.parentElement.querySelector('.color') : "null";
-    const selectedColor = associatedColorElement ? associatedColorElement.id : "blue"; // Using the id as color name
+
+    let selectedColor = "blue"; // default color
+    if (selectedColorBehindElement) {
+        const associatedColorElement = selectedColorBehindElement.parentElement.querySelector('.color');
+        if (associatedColorElement && associatedColorElement.id) {
+            selectedColor = associatedColorElement.id;
+        }
+    }
 
     // Capture the selected icon
     const selectedIconElement = document.querySelector('.iconGroup .icons .material-icons.selected, .iconGroup .icons .material-symbols-outlined.selected');
@@ -76,14 +85,22 @@ const handleCreateProfile = async () => {
         populateContainerList();
     }
     console.log('profile created: ', response, ' with name: ', profileName, ' color: ', selectedColor, ' icon: ', selectedIcon);
+    resetSelections();
 }
 
+const resetSelections = () => {
+    // Deselect colors
+    document.querySelectorAll('.colorGroup .colors .colorBehind').forEach(el => el.classList.remove('selected'));
+    // Deselect icons
+    document.querySelectorAll('.iconGroup .icons .material-icons, .iconGroup .icons .material-symbols-outlined').forEach(el => el.classList.remove('selected'));
+};
 
 // --------------- Enter Key Handlers ---------------
 const handleEnterKeyForProfile = (e) => {
     if (e.key === "Enter") {
         e.preventDefault();
         createProfileButton.click();
+        resetSelections();
     }
 };
 
@@ -144,6 +161,8 @@ profileCardQuerySelector.addEventListener('click', handleProfileCardClick);
 profileCardQuerySelector.addEventListener('focusin', handleProfileCardFocusIn);
 profileCardQuerySelector.addEventListener('focusout', handleProfileCardFocusOut);
 
+
+profileCardElements.addEventListener('click', handleProfileCardClick);
 // --------------- Initialization ---------------
 // populateDeleteDropdown();
 populateContainerList();

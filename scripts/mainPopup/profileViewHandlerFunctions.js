@@ -44,7 +44,6 @@ if (event.target.classList.contains('color')) {
     } else if (event.target.classList.contains('material-icons') || event.target.classList.contains('material-symbols-outlined')) {
         document.querySelectorAll('.iconGroup .icons .material-icons, .iconGroup .icons .material-symbols-outlined').forEach(el => el.classList.remove('selected'));
         event.target.classList.add('selected');
-        console.log('icon selected: ', event.target.textContent);
     }
 };
 
