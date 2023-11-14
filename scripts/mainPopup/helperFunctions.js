@@ -85,12 +85,15 @@ const populateContainerList = async () => {
     const profiles = await getExistingProfiles();
     const containerList = document.getElementById('containerListId');
     containerList.innerHTML = '';
+    const manageContainerList = document.getElementById('manageContainerListId');
+    manageContainerList.innerHTML = '';
 
     profiles.forEach(profile => {
         let containerDiv = document.createElement('div');
         containerDiv.setAttribute('data-key', profile.key); // Storing the profile key
         containerDiv.onclick = () => handleSwitchProfile(profile.key); // Adding click event to switch profile
 
+        // -------------- create the icon & profile name --------------
         let iconElement = document.createElement('i');
         let mappedIcon = reversedIconMapping[profile.icon].icon || 'fingerprint';
         iconElement.className = reversedIconMapping[profile.icon].class;
@@ -111,6 +114,41 @@ const populateContainerList = async () => {
         containerDiv.appendChild(spanElement);
 
         containerList.appendChild(containerDiv);
+
+        // -------------- create the action icons div --------------
+        let actionsDiv = document.createElement('div');
+        actionsDiv.className = 'actionIcons';
+
+        // -------------- create the action buttons --------------
+        let customizeIconDiv = document.createElement('div');
+        customizeIconDiv.className = 'manageActionIcon';
+        let customizeIcon = document.createElement('img');
+        customizeIcon.src = '../icons/manageIcons/customize.png';
+        customizeIconDiv.appendChild(customizeIcon);
+
+        let clearIconDiv = document.createElement('div');
+        clearIconDiv.className = 'manageActionIcon';
+        let clearIcon = document.createElement('img');
+        clearIcon.src = '../icons/manageIcons/clear.png';
+        clearIconDiv.appendChild(clearIcon);
+
+        let trashIconDiv = document.createElement('div');
+        trashIconDiv.className = 'manageActionIcon';
+        let trashIcon = document.createElement('img');
+        trashIcon.src = '../icons/manageIcons/trash.png';
+        trashIconDiv.appendChild(trashIcon);
+
+        actionsDiv.appendChild(customizeIconDiv);
+        actionsDiv.appendChild(clearIconDiv);
+        actionsDiv.appendChild(trashIconDiv);
+
+        
+        // -------------- finalize the manageDiv --------------
+        let manageDiv = containerDiv.cloneNode(true);
+        manageDiv.appendChild(actionsDiv);
+
+
+        manageContainerList.appendChild(manageDiv);
     });
 };
 

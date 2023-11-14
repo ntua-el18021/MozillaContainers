@@ -18,10 +18,13 @@ const profileCardElements = document.getElementById('createProfilePageId');
 
 const mainView = document.getElementById('popupMainId');
 const createView = document.getElementById('createProfilePageId');
+const manageProfilesView = document.getElementById('manageProfilesPageId');
 
 
 const goToProfileViewButton = document.getElementById('goToProfileView');
 const goToMainViewButton = document.getElementById('backButtonId');
+const manageGoToMainViewButton = document.getElementById('manageBackButtonId');
+
 
 
 const createProfileButton = document.getElementById('createProfileOkButton');
@@ -30,9 +33,14 @@ const createProfileButton = document.getElementById('createProfileOkButton');
 const profileNameInput = document.getElementById('profileName');
 // const profileSwitchSelect = document.getElementById('profileSwitchSelect');
 // const profileDeleteSelect = document.getElementById('goToInfoView');
-const deleteProfileButton = document.getElementById('goToInfoView');
+// const deleteProfileButton = document.getElementById('goToInfoView');
 const openHistoryButton = document.getElementById('goToHistoryView');
 // const switchProfileButton = document.getElementById('switchProfile');
+
+// Manage profiles
+const goToManageProfiles = document.getElementById('manageProfiles');
+const deleteProfileButton = document.getElementById('deleteAllProfiles');
+
 
 const profileCardQuerySelector = document.querySelector('.profile-card');
 // -----------------------------------------------------------------------------------------------------------
@@ -44,11 +52,24 @@ const profileCardQuerySelector = document.querySelector('.profile-card');
 const handleGoToProfileView = () => {
     mainView.style.display = 'none';
     createView.style.display = 'block';
+    manageProfilesView.style.display = 'none';
+
 }
 const handleGoToMainView = () => {
     mainView.style.display = 'block';
     createView.style.display = 'none';
+    manageProfilesView.style.display = 'none';
+
 }
+const handleGoToManageProfiles = () => {
+    mainView.style.display = 'none';
+    createView.style.display = 'none';
+    manageProfilesView.style.display = 'block';
+}
+
+
+
+
 
 
 // --------------- Create Profile Handlers ---------------
@@ -149,6 +170,9 @@ const handleOpenHistory = async () => {
 // ----------------- Views Event Handlers -----------------
 goToProfileViewButton.addEventListener('click', handleGoToProfileView);
 goToMainViewButton.addEventListener('click', handleGoToMainView);
+manageGoToMainViewButton.addEventListener('click', handleGoToMainView);
+goToManageProfiles.addEventListener('click', handleGoToManageProfiles);
+
 
 // --------------- Event Listeners ---------------
 createProfileButton.addEventListener('click', handleCreateProfile);

@@ -4,6 +4,10 @@
 <head>
     <link rel="stylesheet" href="../styles/popupStyles.css">
     <link rel="stylesheet" href="../styles/profileStyles.css">
+    <link rel="stylesheet" href="../styles/manageProfileStyles.css">
+    <link rel="stylesheet" href="../styles/generalStyles.css">
+
+
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
 
@@ -14,7 +18,8 @@
 
 <body>
 
-    <div class="popupMain"id="popupMainId" style="display:block;">
+    <!-- MAIN POPUP VIEW -->
+    <div class="popupMain"id="popupMainId" style="display:none;">
 
         <h3>History under Control</h3>
         <div class="actions">
@@ -52,13 +57,18 @@
 
 
 
-
+    <!-- CREATE NEW PROFILE VIEW -->
     <div class="profile-card" id="createProfilePageId" style="display:none;">
 
         <div class="profileHeader"> 
-            <button class="backButton" id="backButtonId">&lt;</button>
+            <!-- <button class="backButton" id="backButtonId">&lt;</button> -->
+            <button class="backButton" id="backButtonId">
+                <img id="goToMainView" src="../icons/generalIcons/back.png" alt="Back">
+            </button>
+            
             <h3>New Profile</h3>
         </div>
+
         <div class="profileName">
             <label for="name">Name</label>
             <input type="text" id="profileName" placeholder="Profile Name">
@@ -125,7 +135,37 @@
         </div>
     </div>
 
-   
+
+    <!-- MANAGE PROFILES VIEW -->
+    <div class="manageProfiles" id="manageProfilesPageId" style="display:block;">
+
+        <div class="profileHeader"> 
+            <button class="backButton" id="manageBackButtonId">
+                <img id="goToMainView" src="../icons/generalIcons/back.png" alt="Back">
+            </button>
+
+            <h3>Manage Profiles</h3>
+        </div>
+
+        <div class="manageCreateNewProfile">
+            <div class="manageCreateButtonWhole">
+                <img class="manageNewProfileIcon" src="../icons/generalIcons/add.png">
+                <span><strong>New Profile</strong></span>
+            </div>
+        </div>
+
+        <div class="searchProfile">
+            <label for="name"><strong>Search Profile</strong></label>
+            <input type="text" id="profileName" placeholder="Profile Name">
+        </div>
+        
+        <div class="manageContainerList" id="manageContainerListId"></div>
+
+        <button id="deleteAllProfiles">Delete All Profiles</button>        
+    </div>
+    
+
+    <!-- USED SCRIPTS -->
     <script type="module" src="../scripts/mainPopup/popup.js"></script>
     <script src="../scripts/background.js"></script>
     

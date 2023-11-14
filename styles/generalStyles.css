@@ -1,0 +1,66 @@
+:root {
+    /* Dimensions Variables */
+    --container-width: 320px; 
+    --leftRightPadding: 15px;
+
+    /* Primary Colors Variables */
+    --primaryBackgroundColor: #42404C;
+    --primaryButtonColor: #2b2a33ba;
+    --dividerColor: 1px solid #ffffff34;
+    --outlineColor: 1px solid #ffffff8b;
+
+    /* Primary Text Color Variables */
+    --textColorPrimary: #ffffff;
+    --textColorSecondary: #fff;
+
+    /* Container List Variables */
+    --iconDimensions: 20px;
+    --iconToTextMargin: 15px;
+    --containerTextFontSize: 16px;
+    --containerListItemsTopMargin: 10px;
+    --containerListItemsBottomMargin: 20px;
+    --totalListElementHeight: calc(var(--iconDimensions) + var(--containerListItemsTopMargin) + var(--containerListItemsBottomMargin));
+
+    --colorDotSize: 16px;
+    --iconSize: 18px;
+    --borderOutlineColor: 1px solid #74f3ed;
+}
+
+
+/* ---------------------- Header Styles ---------------------- */
+.profileHeader {
+    background-color: transparent;
+    display: flex;
+    justify-content: center; 
+    align-items: center;
+    position: relative; 
+    border-bottom: var(--dividerColor);
+}
+.profileHeader > h3 {
+    background-color: transparent;
+    text-align: center;
+    position: relative;
+  
+}
+.backButton {
+    position: absolute;
+    background-color: transparent;
+    border:none;
+    padding:0;
+    margin:0;
+    left: 11px;
+    cursor: pointer;
+    z-index: 1;
+}
+.backButton  > img{
+    width: var(--iconDimensions); 
+    height: var(--iconDimensions);  
+    background-color: transparent;
+    border-radius: 20%;
+    padding: 4px;
+    border:none;
+    cursor: pointer;
+}
+.backButton  > img:hover{
+    background-color: var(--primaryButtonColor);
+}

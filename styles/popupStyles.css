@@ -87,17 +87,18 @@ body {
     margin-top: var(--containerListItemsTopMargin);
     margin-bottom: var(--containerListItemsBottomMargin);
 }
-.containerList > div > span{
-    line-height: 1;
-    color: var(--textColorPrimary);
-    font-size: var(--containerTextFontSize);
-}
 .containerList .icon-wrapper {
     margin-right: var(--iconToTextMargin);
 }
 .containerList .icon-wrapper > i{
     vertical-align: middle; 
 }
+.containerList > div > span{
+    line-height: 1;
+    color: var(--textColorPrimary);
+    font-size: var(--containerTextFontSize);
+}
+
 
 
 /*---------------- Action List Styles ----------------*/

@@ -1,0 +1,164 @@
+:root {
+    /* Dimensions Variables */
+    --container-width: 320px; 
+    --leftRightPadding: 15px;
+
+    /* Primary Colors Variables */
+    --primaryBackgroundColor: #42404C;
+    --primaryButtonColor: #2b2a33ba;
+    --dividerColor: 1px solid #ffffff34;
+    --outlineColor: 1px solid #ffffff8b;
+
+    /* Primary Text Color Variables */
+    --textColorPrimary: #ffffff;
+    --textColorSecondary: #fff;
+
+    /* Container List Variables */
+    --iconDimensions: 20px;
+    --iconToTextMargin: 15px;
+    --containerTextFontSize: 16px;
+    --containerListItemsTopMargin: 10px;
+    --containerListItemsBottomMargin: 20px;
+    --totalListElementHeight: calc(var(--iconDimensions) + var(--containerListItemsTopMargin) + var(--containerListItemsBottomMargin));
+
+    --colorDotSize: 16px;
+    --iconSize: 18px;
+    --borderOutlineColor: 1px solid #74f3ed;
+}
+
+/* ---------------------- General Styles ---------------------- */
+.manageProfiles {
+    background-color: var(--primaryBackgroundColor);
+    border-radius: 10px;
+    width: var(--container-width);
+    color: white;
+}
+
+/* ---------------------- Create Profile ---------------------- */
+.manageProfiles > .manageCreateNewProfile{
+    display: flex;
+    position: relative;
+    background-color: transparent;
+    padding: 10px 8px 10px;
+    border-bottom: var(--dividerColor);
+    align-items: center;
+    /* text-align: center; */
+}
+.manageProfiles > .manageCreateNewProfile > .manageCreateButtonWhole{
+    display: flex;
+    align-items: center;
+    background-color: transparent;
+    border: none;
+    padding: 7px;
+    margin: 0;
+    cursor: pointer;
+    border-radius: 6px;
+    background-color: transparent;
+}
+.manageProfiles > .manageCreateNewProfile > .manageCreateButtonWhole:hover{
+    background-color: var(--primaryButtonColor);
+}
+.manageProfiles > .manageCreateNewProfile > .manageCreateButtonWhole > .manageNewProfileIcon{
+    width: var(--iconDimensions);
+    height: var(--iconDimensions);
+    background-color: transparent;
+    /* border-radius: 20%; */
+    padding: 1px;
+    /* background-color: blue; */
+}
+.manageProfiles > .manageCreateButtonWhole > .manageCreateNewProfile:hover{
+    background-color: var(--primaryButtonColor);
+}
+.manageProfiles > .manageCreateNewProfile > .manageCreateButtonWhole > span{
+    /* background-color: turquoise; */
+    position: relative;
+    padding-left: 15px;
+    font-weight: 500;
+}
+
+
+/* ---------------------- Search Profile ---------------------- */
+.manageProfiles > .searchProfile{
+    margin-bottom: 20px;
+    margin-top: 15px;
+    margin-left: var(--leftRightPadding);
+    margin-right: var(--leftRightPadding);
+}
+.manageProfiles .searchProfile > label {
+    display: block;
+    margin-bottom: 10px;
+    font-weight: 500;
+}
+.manageProfiles .searchProfile > input[type="text"] {
+    width: calc(var(--container-width) - 2*var(--leftRightPadding) - 24px);
+    border-radius: 5px;
+    background-color: var(--primaryButtonColor);
+    color: white;
+    border: 1px solid #ccc;
+    padding: 8px 12px;
+}
+.manageProfiles .searchProfile > input[type="text"]:focus {
+    outline: none;
+    border: var(--borderOutlineColor);
+}
+
+/* ---------------------- Profiles List ---------------------- */
+.manageProfiles .manageContainerList {
+    height: calc(2 * var(--totalListElementHeight)); 
+    overflow-y: auto; 
+    padding-bottom: 30px;
+    margin-bottom: 20px;
+    margin-left: var(--leftRightPadding);
+}
+.manageProfiles > .manageContainerList > div {
+    cursor: pointer;
+    align-items: center; 
+    
+    display: flex;
+    margin-left: 5px;
+    margin-top: var(--containerListItemsTopMargin);
+    margin-bottom: var(--containerListItemsBottomMargin);
+}
+.manageProfiles > .manageContainerList .icon-wrapper {
+    margin-right: var(--iconToTextMargin);
+}
+.manageProfiles >.manageContainerList .manageActionIcon img {
+    width: var(--iconDimensions); 
+    height: var(--iconDimensions);
+    vertical-align: middle; 
+    margin-right: var(--iconToTextMargin);
+}
+.manageProfiles > .manageContainerList > div > span{
+    line-height: 1;
+    color: var(--textColorPrimary);
+    font-size: var(--containerTextFontSize);
+}
+.manageProfiles > .manageContainerList > div > .actionIcons{
+    margin-left: auto;
+    display: flex;
+    display: center;
+    align-items: center;
+    justify-content: space-between;
+}
+
+
+
+
+/* ---------------- Delete All Button ----------------*/
+#deleteAllProfiles {
+    background-color: #2b2a33;
+    color: var(--textColorPrimary);
+    width: calc(var(--container-width) - 2*var(--leftRightPadding));
+    height: 35px;
+    padding: 10px;
+    margin: 5px 0;
+    border: none; 
+    border-radius: 4px;
+    box-sizing: border-box;
+    margin-left: var(--leftRightPadding);
+    margin-right: var(--leftRightPadding);
+    cursor: pointer;
+    font-weight: 600; 
+}
+
+
