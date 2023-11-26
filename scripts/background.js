@@ -108,9 +108,12 @@
 
     browser.commands.onCommand.addListener(async command => {
         if (command === "open_history") {
-            await openHistoryForActiveTab();
+            // await openHistoryForActiveTab();
+            browser.runtime.sendMessage({ action: "goToHistoryView" });
         }
     });
+
+    
 
     async function createContainer(name, selectedColor, selectedIcon) {
         if (!name) {

@@ -83,9 +83,12 @@ function displayError(message) {
 // ============= Populate Display =============
 const populateContainerList = async () => {
     const profiles = await getExistingProfiles();
-    const containerList = document.getElementById('containerListId');
-    containerList.innerHTML = '';
+    const popupContainerList = document.getElementById('containerListId');
+    const containersListView = document.getElementById('containersListViewId');
     const manageContainerList = document.getElementById('manageContainerListId');
+
+    popupContainerList.innerHTML = '';
+    containersListView.innerHTML = '';
     manageContainerList.innerHTML = '';
 
     profiles.forEach(profile => {
@@ -113,7 +116,10 @@ const populateContainerList = async () => {
         containerDiv.appendChild(iconWrapper);
         containerDiv.appendChild(spanElement);
 
-        containerList.appendChild(containerDiv);
+        popupContainerList.appendChild(containerDiv);
+
+        let containerListDiv = containerDiv.cloneNode(true);
+        containersListView.appendChild(containerListDiv);
 
         // -------------- create the action icons div --------------
         let actionsDiv = document.createElement('div');

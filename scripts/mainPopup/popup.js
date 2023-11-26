@@ -9,21 +9,38 @@
 
 import {isNameExists, displayError,displayExistingProfileError, getExistingProfiles, executeProfileDeletion, populateContainerList, iconMapping} from './helperFunctions.js'
 import {handleProfileCardFocusIn, handleProfileCardFocusOut, handleProfileCardClick} from './profileViewHandlerFunctions.js'
-
+import { fetchAndDisplayHistory, populateProfileDropdown } from './historyFunctions.js';
 
  
 // --------------- Cached DOM Elements ---------------
+// document.querySelectorAll('.dateGroupToggle').forEach(button => {
+//     button.addEventListener('click', () => {
+//         const historyEntries = button.nextElementSibling;
+//         historyEntries.style.display = historyEntries.style.display === 'none' ? 'block' : 'none';
+//     });
+// });
+
+
 
 const profileCardElements = document.getElementById('createProfilePageId');
 
 const mainView = document.getElementById('popupMainId');
 const createView = document.getElementById('createProfilePageId');
 const manageProfilesView = document.getElementById('manageProfilesPageId');
+const containersListView = document.getElementById('containersListPageId');
+const informationPageView = document.getElementById('informationPageId');
+const historyPageView = document.getElementById('historyPageId');
+
+
 
 
 const goToProfileViewButton = document.getElementById('goToProfileView');
+
 const goToMainViewButton = document.getElementById('backButtonId');
 const manageGoToMainViewButton = document.getElementById('manageBackButtonId');
+const infoGoToMainViewButton = document.getElementById('infoViewBackButtonId');
+const containersListGoToMainViewButton = document.getElementById('containersListeBackButtonId');
+const historyGoToMainViewButton = document.getElementById('historyBackButtonId');
 
 
 
@@ -37,35 +54,109 @@ const profileNameInput = document.getElementById('profileName');
 const openHistoryButton = document.getElementById('goToHistoryView');
 // const switchProfileButton = document.getElementById('switchProfile');
 
+const openInformationButton = document.getElementById('goToInformationView');
+const goToCreateProfileManageProfiles = document.getElementById('manageCreateNewProfileId');
+
+
 // Manage profiles
 const goToManageProfiles = document.getElementById('manageProfiles');
-const deleteProfileButton = document.getElementById('deleteAllProfiles');
+// const deleteProfileButton = document.getElementById('deleteAllProfiles');
+
+
+const alwaysOpenDiv = document.getElementById('alwaysOpenDivId');
+const reopenInDiv = document.getElementById('reopenInDivId');
+
+
 
 
 const profileCardQuerySelector = document.querySelector('.profile-card');
 // -----------------------------------------------------------------------------------------------------------
+// async function populateProfileDropdown() {
+//     const profiles = await getExistingProfiles(); 
+//     const dropdown = document.getElementById('profileSelect');
 
+//     profiles.forEach(profile => {
+//         const option = document.createElement('option');
+//         option.value = profile.profileName;
+//         option.text = profile.profileName;
+//         dropdown.appendChild(option);
+//     });
+
+//     dropdown.addEventListener('change', async () => {
+//         const selectedProfile = dropdown.value;
+//         const historyEntries = await fetchHistory(selectedProfile);
+//         displayHistory(historyEntries);
+//     });
+// }
 
 
 
 // --------------- View Handlers ---------------
-const handleGoToProfileView = () => {
-    mainView.style.display = 'none';
-    createView.style.display = 'block';
-    manageProfilesView.style.display = 'none';
 
-}
 const handleGoToMainView = () => {
     mainView.style.display = 'block';
     createView.style.display = 'none';
     manageProfilesView.style.display = 'none';
-
+    containersListView.style.display = 'none';
+    informationPageView.style.display = 'none';
+    historyPageView.style.display = 'none';
+}
+const handleGoToProfileView = () => {
+    mainView.style.display = 'none';
+    createView.style.display = 'block';
+    manageProfilesView.style.display = 'none';
+    containersListView.style.display = 'none';
+    informationPageView.style.display = 'none';
+    historyPageView.style.display = 'none';
 }
 const handleGoToManageProfiles = () => {
     mainView.style.display = 'none';
     createView.style.display = 'none';
     manageProfilesView.style.display = 'block';
+    containersListView.style.display = 'none';
+    informationPageView.style.display = 'none';
+    historyPageView.style.display = 'none';
 }
+const handleGoToContainerListView = () => {
+    mainView.style.display = 'none';
+    createView.style.display = 'none';
+    manageProfilesView.style.display = 'none';
+    containersListView.style.display = 'block';
+    informationPageView.style.display = 'none';
+    historyPageView.style.display = 'none';
+}
+const handleGoToInformationView = () => {
+    mainView.style.display = 'none';
+    createView.style.display = 'none';
+    manageProfilesView.style.display = 'none';
+    containersListView.style.display = 'none';
+    informationPageView.style.display = 'block';
+    historyPageView.style.display = 'none';
+}
+const handleOpenHistoryView = async () => {
+    // Switch to the history view.
+    mainView.style.display = 'none';
+    createView.style.display = 'none';
+    manageProfilesView.style.display = 'none';
+    containersListView.style.display = 'none';
+    informationPageView.style.display = 'none';
+    historyPageView.style.display = 'block';
+
+    // Populates the profile dropdown; assumes this function is correctly implemented.
+    await populateProfileDropdown(); // Make sure this function is defined in historyFunctions.js and properly imported.
+
+    // Fetches the current tab's information to find the profile name; assumes permissions are set.
+    const [currentTab] = await browser.tabs.query({ active: true, currentWindow: true });
+    if (currentTab) {
+        const storedData = await browser.storage.local.get(currentTab.cookieStoreId);
+        const profileName = storedData[currentTab.cookieStoreId]?.profileName || "Unknown Profile";
+
+        // You need to replace the following console.log statement with a call to your actual
+        // function that fetches and displays the history for this profile.
+        console.log("Current profile name:", profileName); // Placeholder for actual function call
+        // Example: await fetchAndDisplayHistoryForProfile(profileName); // Define this function
+    }
+};
 
 
 
@@ -162,24 +253,33 @@ const handleDeleteProfile = async () => {
 
 
 // --------------- Open History Handlers ---------------
-const handleOpenHistory = async () => {
-   await openHistoryForActiveTab(); 
-};
+// const handleOpenHistory = async () => {
+//    await openHistoryForActiveTab(); 
+// };
 
 
 // ----------------- Views Event Handlers -----------------
 goToProfileViewButton.addEventListener('click', handleGoToProfileView);
 goToMainViewButton.addEventListener('click', handleGoToMainView);
 manageGoToMainViewButton.addEventListener('click', handleGoToMainView);
+infoGoToMainViewButton.addEventListener('click', handleGoToMainView);
+containersListGoToMainViewButton.addEventListener('click', handleGoToMainView);
+historyGoToMainViewButton.addEventListener('click', handleGoToMainView);
+
 goToManageProfiles.addEventListener('click', handleGoToManageProfiles);
+openInformationButton.addEventListener('click', handleGoToInformationView);
+reopenInDiv.addEventListener('click', handleGoToContainerListView);
+alwaysOpenDiv.addEventListener('click', handleGoToContainerListView);
+
+goToCreateProfileManageProfiles.addEventListener('click', handleGoToProfileView);
 
 
 // --------------- Event Listeners ---------------
 createProfileButton.addEventListener('click', handleCreateProfile);
 profileNameInput.addEventListener('keydown', handleEnterKeyForProfile);
 // switchProfileButton.addEventListener('click', handleSwitchProfile);
-deleteProfileButton.addEventListener('click', handleDeleteProfile);
-openHistoryButton.addEventListener('click', handleOpenHistory);
+// deleteProfileButton.addEventListener('click', handleDeleteProfile);
+openHistoryButton.addEventListener('click', handleOpenHistoryView);
 
 profileCardQuerySelector.addEventListener('click', handleProfileCardClick);
 profileCardQuerySelector.addEventListener('focusin', handleProfileCardFocusIn);

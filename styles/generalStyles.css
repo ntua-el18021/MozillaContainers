@@ -64,3 +64,77 @@
 .backButton  > img:hover{
     background-color: var(--primaryButtonColor);
 }
+
+
+
+/* ---------------------- Search Profile ---------------------- */
+.searchProfile{
+    margin-bottom: 20px;
+    margin-top: 15px;
+    margin-left: var(--leftRightPadding);
+    margin-right: var(--leftRightPadding);
+}
+.searchProfile > label {
+    display: block;
+    margin-bottom: 10px;
+    font-weight: 500;
+}
+.searchProfile > input[type="text"] {
+    width: calc(var(--container-width) - 2*var(--leftRightPadding) - 24px);
+    border-radius: 5px;
+    background-color: var(--primaryButtonColor);
+    color: white;
+    border: 1px solid #ccc;
+    padding: 8px 12px;
+}
+.searchProfile > input[type="text"]:focus {
+    outline: none;
+    border: var(--borderOutlineColor);
+}
+
+
+/*---------------------Text Styles-------------------------- */
+.italics{
+    font-style: italic;
+    font-weight: 5;
+}
+.yellow{
+    color: #FFC107;
+}
+.yellowFaded{
+    color: rgba(243, 214, 128, 0.846)
+}
+.informationPage .backButton {
+   color: #FFC107;
+}
+
+
+
+/*---------------------Simple Views Styles-------------------------- */
+.containersListPage {
+    background-color: var(--primaryBackgroundColor);
+    border-radius: 10px;
+    width: var(--container-width);
+    color: white;
+}
+
+.informationPage {
+    background-color: var(--primaryBackgroundColor);
+    border-radius: 10px;
+    width: var(--container-width);
+    color: white;
+}
+.informationPage body{
+    font-family: "Open Sans", sans-serif;
+    font-style: normal;
+    font-weight: 200; 
+    background-color: var(--primaryBackgroundColor);
+    margin: 0;
+    width: var(--container-width);
+}
+
+
+
+
+
+

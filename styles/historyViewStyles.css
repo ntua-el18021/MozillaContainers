@@ -1,0 +1,220 @@
+:root {
+    /* Dimensions Variables */
+    --container-width: 320px; 
+    --leftRightPadding: 15px;
+
+    /* Primary Colors Variables */
+    --primaryBackgroundColor: #42404C;
+    --primaryButtonColor: #2b2a33ba;
+    --dividerColor: 1px solid #ffffff34;
+    --outlineColor: 1px solid #ffffff8b;
+
+    /* Primary Text Color Variables */
+    --textColorPrimary: #ffffff;
+    --textColorSecondary: #fff;
+
+    /* Container List Variables */
+    --iconDimensions: 20px;
+    --iconToTextMargin: 15px;
+    --containerTextFontSize: 16px;
+    --containerListItemsTopMargin: 10px;
+    --containerListItemsBottomMargin: 20px;
+    --totalListElementHeight: calc(var(--iconDimensions) + var(--containerListItemsTopMargin) + var(--containerListItemsBottomMargin));
+
+    --colorDotSize: 16px;
+    --iconSize: 18px;
+    --borderOutlineColor: 1px solid #74f3ed;
+
+    /* Colors */
+    --yellow: #FFC107;
+    --yellowFaded: rgba(255, 193, 7, 0.729);
+}
+
+/* ---------------------- General ---------------------- */
+.historyPage {
+    background-color: var(--primaryBackgroundColor);
+    border-radius: 10px;
+    width: var(--container-width);
+    color: white;
+}
+.divider{
+    border-bottom: var(--dividerColor);
+}
+
+
+/* ---------------------- Search History ---------------------- */
+.historyPage .searchProfile {
+    margin-bottom: 20px;
+    margin-top: 15px;
+    margin-left: var(--leftRightPadding);
+    margin-right: var(--leftRightPadding);
+}
+.historyPage .searchProfile > label {
+    display: block;
+    margin-bottom: 10px;
+    font-weight: 500;
+    color: white;
+}
+.historyPage .searchProfile .searchInputContainer {
+    display: flex;
+    align-items: center;
+    border-radius: 5px;
+    border: 2px solid #ccc;
+    padding: 8px;
+    background-color: var(--primaryButtonColor);
+}
+.historyPage .searchProfile .searchInputContainer .searchIcon {
+    margin-right: 8px;
+    height: var(--iconDimensions);
+    width: var(--iconDimensions);
+    margin-right: 8px;
+}
+.historyPage .searchProfile .searchInputContainer input[type="text"] {
+    width: 100%;
+    background-color: transparent;
+    border: none;
+    color: white;
+    outline: none;
+}
+
+
+/* ---------------------- Profiles Dropdown ---------------------- */
+.profileDropdown {
+    margin-bottom: 20px;
+    margin-top: 15px;
+    margin-left: var(--leftRightPadding);
+    margin-right: var(--leftRightPadding);
+}
+.profileDropdown .dropdownContainer {
+    position: relative;
+    display: flex;
+    align-items: center;
+    border-radius: 5px;
+    border: 2px solid var(--yellow);
+    background-color: var(--primaryButtonColor);
+}
+.profileDropdown .dropdownContainer select {
+    cursor: pointer;
+    width: 100%;
+    background-color: transparent;
+    border: none;
+    color: #e7d7a4fb;
+    padding: 8px;
+    -webkit-appearance: none; 
+    -moz-appearance: none;    
+    appearance: none;         
+    border-radius: 5px;
+
+    margin-left: 30px;
+    font-weight: 700;
+}
+.profileDropdown .dropdownContainer .dropdownIcon {
+    cursor: pointer;
+    width: var(--iconDimensions);
+    height: var(--iconDimensions);
+    position: absolute;
+    right: 10px;
+    pointer-events: none; 
+}
+.profileDropdown .dropdownContainer select:focus {
+    background-color: var(--primaryButtonColor);
+}
+
+
+/* ---------------------- Histories List ---------------------- */
+.expandableCheckbox {
+    margin-bottom: 10px;
+}
+.historyGroup{
+    display:block;
+}
+.toggleLabel {
+    display: flex; 
+    align-items: center;
+    width: fit-content ;
+
+    cursor: pointer;
+    font-size: 15px;
+    color: #FFFFFF;
+    background-color: #42404C;
+    border-radius: 5px;
+    transition: background-color 0.3s ease;
+
+    padding: 5px 8px; 
+    margin-bottom: 5px; 
+    margin-left: 10px;
+}
+.historyDisplayIcons {
+    cursor: pointer;
+    width: calc(var(--iconDimensions) );
+    height: calc(var(--iconDimensions) );
+    pointer-events: none; 
+    margin-right: 8px;
+}
+.toggleLabel:hover {
+    background-color: #505C6B;
+}
+.content {
+    display: none;
+    width: fit-content ;    
+    background-color: #2b2a33;
+    color: #ffffff;
+    border-radius: 5px;
+
+    padding-left: 10px;
+    padding-right: 10px;
+    padding-bottom: 0px;
+    padding-top: 10px;
+    margin-left: 30px;
+}
+.toggleCheckbox:checked + .toggleLabel + .content {
+    display: block;
+}
+.toggleCheckbox:checked + .toggleLabel {
+    background-color: #505C6B;
+}
+.icon {
+    display: inline-block;
+    width: calc(var(--iconDimensions) - 10px);
+    height: calc(var(--iconDimensions) - 10px);
+    background-image: url('../icons/historyIcons/rightArrow.png'); 
+    background-size: contain;
+    background-repeat: no-repeat;
+    transition: transform 0.3s ease;
+    margin-right: 10px; 
+}
+.toggleCheckbox:checked + .toggleLabel .icon {
+    background-image: url('../icons/historyIcons/downArrow.png'); 
+}
+
+
+/* ---------------------- History Entries ---------------------- */
+.historyEntry{
+    align-items: center;
+    justify-content: space-between;
+    display: flex;
+    margin: 0;
+    padding: 0;
+    padding-bottom: 10px;
+}
+.historyEntry > img{
+    margin: 0px;
+    padding: 0px;
+    width: var(--iconDimensions);
+    height: var(--iconDimensions);
+    margin-right: var(--iconToTextMargin);
+}
+.historyEntry > p{
+    padding:0px;
+    margin:0px;
+}
+.customLink {
+    color: var(--yellowFaded); 
+    text-decoration: none; 
+}
+.customLink:hover {
+    color: var(--yellow); 
+    text-decoration: underline; 
+}
+
+

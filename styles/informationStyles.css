@@ -1,0 +1,94 @@
+:root {
+    /* Dimensions Variables */
+    --container-width: 320px; 
+    --leftRightPadding: 15px;
+
+    /* Primary Colors Variables */
+    --primaryBackgroundColor: #42404C;
+    --primaryButtonColor: #2b2a33ba;
+    --dividerColor: 1px solid #ffffff34;
+    --outlineColor: 1px solid #ffffff8b;
+
+    /* Primary Text Color Variables */
+    --textColorPrimary: #ffffff;
+    --textColorSecondary: #fff;
+
+    /* Container List Variables */
+    --iconDimensions: 20px;
+    --iconToTextMargin: 15px;
+    --containerTextFontSize: 16px;
+    --containerListItemsTopMargin: 10px;
+    --containerListItemsBottomMargin: 20px;
+    --totalListElementHeight: calc(var(--iconDimensions) + var(--containerListItemsTopMargin) + var(--containerListItemsBottomMargin));
+
+    --colorDotSize: 16px;
+    --iconSize: 18px;
+    --borderOutlineColor: 1px solid #74f3ed;
+}
+
+
+/* Header & Description Styles */
+.informationPage h4 {
+    color: #FFC107; 
+    font-size: 1.2rem;
+    margin-top: 0;
+    margin-bottom: 5px;
+    padding-bottom: 5px;
+}
+.headerDescription {
+    color: var(--textColorSecondary);
+    font-style: italic;
+    font-size: 0.9rem;
+    text-align: right;
+    
+    margin-top: 4px;
+    margin-bottom: 12px;
+    padding-top:10px;
+    padding-left: var(--leftRightPadding);
+    padding-right: var(--leftRightPadding);
+}
+
+
+/* Information Segments Styles */
+.informationSection {
+    background-color: #35353f;
+    padding: 12px var(--leftRightPadding);
+    margin: var(--leftRightPadding);
+    border-radius: 6px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+.informationSection > .infoItem {
+    display: flex;
+    align-items: flex-start;
+    margin-bottom: 1px; 
+    border-bottom: #74f3ed;
+}
+.informationSection > .infoItem > .infoIcon {
+    width: 20px; 
+    height: 20px;
+    margin-right: 10px;
+}
+.informationSection > .infoItem > h5 {
+    margin: 0;
+    flex-grow: 1; 
+    font-size: 1rem;
+    text-decoration: underline;
+    text-decoration-thickness: 1.1px;
+    text-underline-offset: 5px;
+    text-decoration-color: #FFC107;
+}
+
+/* List Items Styles */
+.informationPage > ul {
+    list-style-type: disc; 
+    list-style-position: outside;
+    padding-left: var(--leftRightPadding);
+    margin-left: 0; 
+    margin-top: 4px;
+}
+.informationPage > ul > li {
+    margin-bottom: 5px;
+    color: var(--textColorSecondary);
+    font-size: var(--containerTextFontSize);
+}
+
