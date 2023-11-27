@@ -235,4 +235,4 @@ const deleteIndexedDBHistory = async (profile) => {
 };
 
 
-export {isNameExists, displayError, displayExistingProfileError, getExistingProfiles, executeProfileDeletion, populateContainerList, iconMapping};
+export {reversedIconMapping, colorsMapping, isNameExists, displayError, displayExistingProfileError, getExistingProfiles, executeProfileDeletion, populateContainerList, iconMapping};

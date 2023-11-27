@@ -60,14 +60,8 @@
 
         </div>
 
-                    
-                
-        
-
-
         <div id="spacerMainId"></div>
-        
-        
+                
         <span id="containersTitleId">Containers</span>
         <input type="text" id="containerSearchId" placeholder="Search for containers...">
 
@@ -175,9 +169,9 @@
             </div>
         </div>
 
-        <div class="searchProfile">
+        <div class="searchProfile" >
             <label for="name"><strong>Search Profile</strong></label>
-            <input type="text" id="profileName" placeholder="Profile Name">
+            <input type="text" id="manageProfilesSearchId" placeholder="Profile Name">
         </div>
         
         <div class="manageContainerList" id="manageContainerListId"></div>
@@ -186,7 +180,7 @@
     </div>
 
 
-    <!-- DELETE PROFILE VIEW -->
+    <!-- CONTAINERS LIST VIEW -->
     <div class="containersListPage" id="containersListPageId" style="display:none;">
         <div class="profileHeader"> 
             <button class="backButton" id="containersListeBackButtonId">
@@ -197,7 +191,7 @@
 
         <div class="searchProfile">
             <label for="name"><strong>Search Profile</strong></label>
-            <input type="text" id="profileName" placeholder="Profile Name">
+            <input type="text" id="containersListViewSearchId" placeholder="Profile Name">
         </div>
 
         <div class="containerList" id="containersListViewId"></div>
@@ -336,9 +330,8 @@
             </button>
             <h3>History</h3>
         </div>
+        <button id="toggleOpenInProfile">Open in Profile</button>
         
-
-
         <div class="profileDropdown">
             <div class="dropdownContainer">
                 <select id="profileSelect" placeholder="Select a Profile">
@@ -354,89 +347,17 @@
 
         <div class="divider"></div>
 
-
         <div class="searchProfile">
             <div class="searchInputContainer">
                 <img src="../icons/infoIcons/lens.png" alt="Search" class="searchIcon">
-                <input type="text" id="profileName" placeholder="Search History">
+                <input type="text" id="searchHistory" placeholder="Search History">
             </div>
         </div>
+       
+        <div class="historyEntriesContainer" id="historyEntriesContainer"></div>
 
-        <!-- <div id="historyEntriesContainer">
-        </div> -->
-        
-        <div class="historyEntriesContainer" id="historyEntriesContainer">
-        </div>
-
-        <!-- <div class="expandableCheckbox">
-            <div class="hisotryGroup">
-                <input type="checkbox" id="todayCheckbox" class="toggleCheckbox" hidden />
-                <label for="todayCheckbox" class="toggleLabel">
-                    <span class="icon"></span> 
-                    <img src="../icons/historyIcons/clock.png"  class="historyDisplayIcons">
-                    <span>Today</span>
-                </label>
-                <div class="content">
-                    <div class="historyEntry">
-                        <img src="../icons/historyIcons/google.png" alt="">
-                        <a href="https://www.example.com" class="customLink">www.google.com</a>
-                    </div>
-                    
-                    <div class="historyEntry">
-                        <img src="../icons/historyIcons/google.png" alt="">
-                        <a href="https://www.example.com" class="customLink">www.google.com</a>
-                    </div>
-                </div>
-            </div>
-        
-            <div class="hisotryGroup">
-                <input type="checkbox" id="yesterdayCheckbox" class="toggleCheckbox" hidden />
-                <label for="yesterdayCheckbox" class="toggleLabel">
-                    <span class="icon"></span> 
-                    <img src="../icons/historyIcons/clock.png"  class="historyDisplayIcons">
-                    Yesterday
-                </label>
-                <div class="content">
-                    <div class="historyEntry">
-                        <img src="../icons/historyIcons/google.png" alt="">
-                        <a href="https://www.example.com" class="customLink">www.google.com</a>
-                    </div>
-                    <div class="historyEntry">
-                        <img src="../icons/historyIcons/google.png" alt="">
-                        <a href="https://www.example.com" class="customLink">www.google.com</a>
-                    </div>
-                    <div class="historyEntry">
-                        <img src="../icons/historyIcons/google.png" alt="">
-                        <a href="https://www.example.com" class="customLink">www.google.com</a>
-                    </div>                </div>
-            </div>
-
-            <div class="hisotryGroup">
-                <input type="checkbox" id="thisWeekCheckbox" class="toggleCheckbox" hidden />
-                <label for="thisWeekCheckbox" class="toggleLabel">
-                    <span class="icon"></span> 
-                    <img src="../icons/historyIcons/clock.png"  class="historyDisplayIcons">
-                    This Week
-                </label>
-                <div class="content">
-                    <div class="historyEntry">
-                        <img src="../icons/historyIcons/google.png" alt="">
-                        <a href="https://www.example.com" class="customLink">www.google.com</a>
-                    </div>
-                    <div class="historyEntry">
-                        <img src="../icons/historyIcons/google.png" alt="">
-                        <a href="https://www.example.com" class="customLink">www.google.com</a>
-                    </div>
-                </div>
-            </div>
-        </div> -->
-        
-
-
-
-
-
-
+        <div class="historyDivider"></div>
+    
     </div>
     
 

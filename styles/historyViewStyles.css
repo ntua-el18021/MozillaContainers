@@ -191,11 +191,12 @@
 /* ---------------------- History Entries ---------------------- */
 .historyEntry{
     align-items: center;
-    justify-content: space-between;
+    justify-content: flex-start;
     display: flex;
     margin: 0;
     padding: 0;
     padding-bottom: 10px;
+    text-align: left;
 }
 .historyEntry > img{
     margin: 0px;
@@ -207,14 +208,24 @@
 .historyEntry > p{
     padding:0px;
     margin:0px;
+    text-align: left;
 }
 .customLink {
     color: var(--yellowFaded); 
     text-decoration: none; 
+    cursor: pointer;
 }
 .customLink:hover {
     color: var(--yellow); 
     text-decoration: underline; 
 }
+
+.historyDivider{
+    height:20px;
+}
+
+
+
+
 
 

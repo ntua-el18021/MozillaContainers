@@ -9,9 +9,9 @@
 
 import {isNameExists, displayError,displayExistingProfileError, getExistingProfiles, executeProfileDeletion, populateContainerList, iconMapping} from './helperFunctions.js'
 import {handleProfileCardFocusIn, handleProfileCardFocusOut, handleProfileCardClick} from './profileViewHandlerFunctions.js'
-import { fetchAndDisplayHistory, populateProfileDropdown } from './historyFunctions.js';
+import {  populateProfileDropdown , displayProfileHistory} from './historyFunctions.js';
 
- 
+import{} from './actionsFunctions.js'
 // --------------- Cached DOM Elements ---------------
 // document.querySelectorAll('.dateGroupToggle').forEach(button => {
 //     button.addEventListener('click', () => {
@@ -70,24 +70,37 @@ const reopenInDiv = document.getElementById('reopenInDivId');
 
 
 const profileCardQuerySelector = document.querySelector('.profile-card');
-// -----------------------------------------------------------------------------------------------------------
-// async function populateProfileDropdown() {
-//     const profiles = await getExistingProfiles(); 
-//     const dropdown = document.getElementById('profileSelect');
 
-//     profiles.forEach(profile => {
-//         const option = document.createElement('option');
-//         option.value = profile.profileName;
-//         option.text = profile.profileName;
-//         dropdown.appendChild(option);
-//     });
+document.getElementById('searchHistory').addEventListener('input', handleSearchHistory);
 
-//     dropdown.addEventListener('change', async () => {
-//         const selectedProfile = dropdown.value;
-//         const historyEntries = await fetchHistory(selectedProfile);
-//         displayHistory(historyEntries);
-//     });
-// }
+// ===========================================================
+document.getElementById('containerSearchId').addEventListener('input', (event) => {
+    filterContainerList(event.target.value, 'containerListId');
+});
+
+document.getElementById('manageProfilesSearchId').addEventListener('input', (event) => {
+    filterContainerList(event.target.value, 'manageContainerListId');
+});
+
+document.getElementById('containersListViewSearchId').addEventListener('input', (event) => {
+    filterContainerList(event.target.value, 'containersListViewId');
+});
+
+function filterContainerList(searchTerm, containerListId) {
+    const searchLower = searchTerm.toLowerCase();
+    const containerList = document.getElementById(containerListId);
+    const containerDivs = containerList.querySelectorAll('div[data-key]'); // Assuming each container div has a data-key attribute
+
+    containerDivs.forEach(div => {
+        const profileName = div.querySelector('span').textContent.toLowerCase();
+        if (profileName.includes(searchLower)) {
+            div.style.display = ''; // Show the container
+        } else {
+            div.style.display = 'none'; // Hide the container
+        }
+    });
+}
+
 
 
 
@@ -142,21 +155,80 @@ const handleOpenHistoryView = async () => {
     informationPageView.style.display = 'none';
     historyPageView.style.display = 'block';
 
-    // Populates the profile dropdown; assumes this function is correctly implemented.
-    await populateProfileDropdown(); // Make sure this function is defined in historyFunctions.js and properly imported.
-
-    // Fetches the current tab's information to find the profile name; assumes permissions are set.
+    // Fetches the current tab's information to find the profile name.
     const [currentTab] = await browser.tabs.query({ active: true, currentWindow: true });
+    let profileName = "Unknown Profile";
     if (currentTab) {
         const storedData = await browser.storage.local.get(currentTab.cookieStoreId);
-        const profileName = storedData[currentTab.cookieStoreId]?.profileName || "Unknown Profile";
-
-        // You need to replace the following console.log statement with a call to your actual
-        // function that fetches and displays the history for this profile.
-        console.log("Current profile name:", profileName); // Placeholder for actual function call
-        // Example: await fetchAndDisplayHistoryForProfile(profileName); // Define this function
+        profileName = storedData[currentTab.cookieStoreId]?.profileName || "Unknown Profile";
     }
+
+    // Populate the dropdown and set the current profile as selected
+    await populateProfileDropdown(profileName);
+
+    // Fetch and display history for the current profile.
+    await displayProfileHistory(profileName);
 };
+
+// ----------------- History Search -----------------
+let initialGroupStates = {}; // Global variable to store initial group states
+
+function findParentGroup(element) {
+    // Helper function to find the parent group ID
+    const groupDiv = element.closest('.historyGroup');
+    if (groupDiv) {
+        const checkbox = groupDiv.querySelector('.toggleCheckbox');
+        return checkbox.id;
+    }
+    return null;
+}
+
+function handleSearchHistory(event) {
+    const searchTerm = event.target.value.toLowerCase();
+    const historyEntries = document.querySelectorAll('.historyEntry');
+    const groupsToExpand = new Set(); 
+
+    if (searchTerm && Object.keys(initialGroupStates).length === 0) {
+        document.querySelectorAll('.historyGroup .toggleCheckbox').forEach(checkbox => {
+            initialGroupStates[checkbox.id] = checkbox.checked;
+        });
+    }
+
+    historyEntries.forEach(entry => {
+        const title = entry.querySelector('a').textContent.toLowerCase();
+        const url = entry.querySelector('a').href.toLowerCase();
+        
+        if (title.includes(searchTerm) || url.includes(searchTerm)) {
+            entry.style.display = ''; 
+            const parentGroupId = findParentGroup(entry);
+            if (parentGroupId) {
+                groupsToExpand.add(parentGroupId);
+            }
+        } else {
+            entry.style.display = 'none'; 
+        }
+    });
+
+    groupsToExpand.forEach(groupId => {
+        const checkbox = document.getElementById(groupId);
+        if (checkbox) {
+            checkbox.checked = true;
+        }
+    });
+
+    if (searchTerm === '') {
+        for (const [groupId, isChecked] of Object.entries(initialGroupStates)) {
+            const checkbox = document.getElementById(groupId);
+            if (checkbox) {
+                checkbox.checked = isChecked;
+            }
+        }
+        initialGroupStates = {}; 
+    }
+}
+
+
+
 
 
 

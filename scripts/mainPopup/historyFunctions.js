@@ -1,3 +1,16 @@
+
+let openInSelectedProfile = false;
+document.addEventListener('DOMContentLoaded', async () => {
+    await populateProfileDropdown();
+    await fetchAndDisplayHistory();
+});
+
+
+document.getElementById('toggleOpenInProfile').addEventListener('click', () => {
+    openInSelectedProfile = !openInSelectedProfile;
+    document.getElementById('toggleOpenInProfile').textContent = openInSelectedProfile ? "Open in Selected Profile" : "Open in Current Profile";
+});
+
 async function getExistingProfiles() {
     const existingProfiles = await browser.storage.local.get();
     return Object.keys(existingProfiles)
@@ -5,19 +18,12 @@ async function getExistingProfiles() {
         .map(key => ({ profileName: existingProfiles[key].profileName, ...existingProfiles[key] }));
 }
 
-async function populateProfileDropdown() {
+async function populateProfileDropdown(selectedProfileName = null) {
     const profiles = await getExistingProfiles();
     const profileSelectElement = document.getElementById('profileSelect');
 
     // Clear existing options
-    profileSelectElement.length = 0;
-    
-    // Add a placeholder option
-    const placeholderOption = document.createElement('option');
-    placeholderOption.textContent = "Select your profile";
-    placeholderOption.disabled = true;
-    placeholderOption.selected = true;
-    profileSelectElement.appendChild(placeholderOption);
+    profileSelectElement.innerHTML = '';
 
     // Populate the dropdown with profiles
     profiles.forEach(profile => {
@@ -25,14 +31,21 @@ async function populateProfileDropdown() {
         option.value = profile.profileName;
         option.textContent = profile.profileName;
         profileSelectElement.appendChild(option);
+
+        // Set the selected profile if specified
+        if (selectedProfileName && profile.profileName === selectedProfileName) {
+            option.selected = true;
+        }
     });
 
-    // Add the event listener for profile selection change
+    // Event listener for profile selection change
     profileSelectElement.addEventListener('change', async (event) => {
         const selectedProfileName = event.target.value;
-        displayProfileHistory(selectedProfileName);
+        await displayProfileHistory(selectedProfileName);
     });
 }
+
+
 
 function groupHistoryByDate(historyEntries) {
     const groupedHistory = {
@@ -137,32 +150,103 @@ function displayGroupedHistoryEntries(groupedEntries, profileName) {
     const historyEntriesContainer = document.getElementById('historyEntriesContainer');
     historyEntriesContainer.innerHTML = ''; // Clear existing entries
 
-    // Add profile header
-    const profileHeader = document.createElement('h3');
-    profileHeader.textContent = `History for ${profileName}`;
-    historyEntriesContainer.appendChild(profileHeader);
-
     for (const group in groupedEntries) {
         if (groupedEntries[group].length > 0) {
-            const groupHeader = document.createElement('h4');
-            groupHeader.textContent = group.charAt(0).toUpperCase() + group.slice(1); // Capitalize group name
-            historyEntriesContainer.appendChild(groupHeader);
+            // Create the group container
+            const groupDiv = document.createElement('div');
+            groupDiv.className = 'historyGroup';
 
-            for (const entry of groupedEntries[group]) {
-                const historyEntryDiv = createHistoryEntryDiv(entry);
-                historyEntriesContainer.appendChild(historyEntryDiv);
-            }
+            // Create the toggle checkbox
+            const checkbox = document.createElement('input');
+            checkbox.type = 'checkbox';
+            checkbox.id = group + 'Checkbox';
+            checkbox.className = 'toggleCheckbox';
+            checkbox.hidden = true;
+
+            // Create the label for the group
+            const label = document.createElement('label');
+            label.htmlFor = group + 'Checkbox';
+            label.className = 'toggleLabel';
+
+            const iconSpan = document.createElement('span');
+            iconSpan.className = 'icon';
+
+            const groupIcon = document.createElement('img');
+            groupIcon.src = '../icons/historyIcons/clock.png';
+            groupIcon.className = 'historyDisplayIcons';
+
+            const groupName = document.createElement('span');
+            groupName.textContent = group.charAt(0).toUpperCase() + group.slice(1); // Capitalize first letter
+
+            // Append elements to label
+            label.appendChild(iconSpan);
+            label.appendChild(groupIcon);
+            label.appendChild(groupName);
+
+            // Create the content div
+            const contentDiv = document.createElement('div');
+            contentDiv.className = 'content';
+
+            // Populate the content div with history entries
+            groupedEntries[group].forEach(entry => {
+                const entryDiv = createHistoryEntryDiv(entry);
+                contentDiv.appendChild(entryDiv);
+            });
+
+            // Append elements to groupDiv
+            groupDiv.appendChild(checkbox);
+            groupDiv.appendChild(label);
+            groupDiv.appendChild(contentDiv);
+
+            // Append the groupDiv to the container
+            historyEntriesContainer.appendChild(groupDiv);
         }
     }
 }
 
+
 function createHistoryEntryDiv(entry) {
     const div = document.createElement('div');
-    div.className = 'history-entry';
-    div.innerHTML = `
-        <img src="${entry.icon || 'default-icon.png'}" alt="Favicon" class="favicon">
-        <a href="${entry.url}" target="_blank">${entry.title || entry.url}</a>
-    `;
+    div.className = 'historyEntry';
+
+    const img = document.createElement('img');
+    const faviconSize = 32; // Your preferred size
+    img.src = `https://www.google.com/s2/favicons?domain=${new URL(entry.url).hostname}&sz=${faviconSize}`;
+    img.alt = 'Favicon';
+    img.className = 'favicon';
+
+    const a = document.createElement('a');
+    a.textContent = entry.title || entry.url;
+    a.className = 'customLink';
+
+    // Event listener for opening the link in the selected profile
+    a.addEventListener('click', async (e) => {
+        e.preventDefault();
+
+        if (openInSelectedProfile) {
+            // Get the selected profile name from the dropdown
+            const selectedProfileName = document.getElementById('profileSelect').value;
+            const profiles = await getExistingProfiles();
+            const selectedProfile = profiles.find(p => p.profileName === selectedProfileName);
+
+            if (selectedProfile) {
+                try {
+                    await browser.tabs.create({
+                        url: entry.url,
+                        cookieStoreId: selectedProfile.cookieStoreId // Open in the selected profile container
+                    });
+                } catch (error) {
+                    console.error("Error opening link in profile:", error);
+                }
+            }
+        } else {
+            window.open(entry.url, '_blank'); // Open in current profile
+        }
+    });
+
+    div.appendChild(img);
+    div.appendChild(a);
+
     return div;
 }
 
@@ -170,4 +254,7 @@ function createHistoryEntryDiv(entry) {
 
 
 
-export { fetchAndDisplayHistory, populateProfileDropdown, displayProfileHistory };
+
+
+
+export { populateProfileDropdown, displayProfileHistory };
