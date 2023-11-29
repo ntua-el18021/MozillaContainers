@@ -1,15 +1,92 @@
-
-let openInSelectedProfile = false;
-document.addEventListener('DOMContentLoaded', async () => {
-    await populateProfileDropdown();
-    await fetchAndDisplayHistory();
-});
+import {initialGroupStates, openInSelectedProfile} from '../mainPopup/popup.js';
 
 
-document.getElementById('toggleOpenInProfile').addEventListener('click', () => {
-    openInSelectedProfile = !openInSelectedProfile;
-    document.getElementById('toggleOpenInProfile').textContent = openInSelectedProfile ? "Open in Selected Profile" : "Open in Current Profile";
-});
+export  async function profileForHistory() {
+    const [currentTab] = await browser.tabs.query({ active: true, currentWindow: true });
+    console.log('currentTab: ', currentTab);
+    let profileName = "Unknown Profile";
+    if (currentTab) {
+        const storedData = await browser.storage.local.get(currentTab.cookieStoreId);
+        console.log('storedData: ', storedData);
+        profileName = storedData[currentTab.cookieStoreId]?.profileName || "Unknown Profile";
+        console.log('profileName: ', profileName);
+    }
+
+    await populateProfileDropdown(profileName);
+    await displayProfileHistory(profileName);
+}
+
+
+export function filterContainerList(searchTerm, containerListId) {
+    const searchLower = searchTerm.toLowerCase();
+    const containerList = document.getElementById(containerListId);
+    const containerDivs = containerList.querySelectorAll('div[data-key]');
+
+    containerDivs.forEach(div => {
+        const profileName = div.querySelector('span').textContent.toLowerCase();
+        if (profileName.includes(searchLower)) {
+            div.style.display = ''; // Show the container
+        } else {
+            div.style.display = 'none'; // Hide the container
+        }
+    });
+}
+
+
+function findParentGroup(element) {
+    const groupDiv = element.closest('.historyGroup');
+    if (groupDiv) {
+        const checkbox = groupDiv.querySelector('.toggleCheckbox');
+        return checkbox.id;
+    }
+    return null;
+}
+
+
+export function handleSearchHistory(event) {
+    const searchTerm = event.target.value.toLowerCase();
+    const historyEntries = document.querySelectorAll('.historyEntry');
+    const groupsToExpand = new Set(); 
+
+    if (searchTerm && Object.keys(initialGroupStates).length === 0) {
+        document.querySelectorAll('.historyGroup .toggleCheckbox').forEach(checkbox => {
+            initialGroupStates[checkbox.id] = checkbox.checked;
+        });
+    }
+
+    historyEntries.forEach(entry => {
+        const title = entry.querySelector('a').textContent.toLowerCase();
+        const url = entry.querySelector('a').href.toLowerCase();
+        
+        if (title.includes(searchTerm) || url.includes(searchTerm)) {
+            entry.style.display = ''; 
+            const parentGroupId = findParentGroup(entry);
+            if (parentGroupId) {
+                groupsToExpand.add(parentGroupId);
+            }
+        } else {
+            entry.style.display = 'none'; 
+        }
+    });
+
+    groupsToExpand.forEach(groupId => {
+        const checkbox = document.getElementById(groupId);
+        if (checkbox) {
+            checkbox.checked = true;
+        }
+    });
+
+    if (searchTerm === '') {
+        for (const [groupId, isChecked] of Object.entries(initialGroupStates)) {
+            const checkbox = document.getElementById(groupId);
+            if (checkbox) {
+                checkbox.checked = isChecked;
+            }
+        }
+        initialGroupStates = {}; 
+    }
+}
+
 
 async function getExistingProfiles() {
     const existingProfiles = await browser.storage.local.get();
@@ -18,12 +95,22 @@ async function getExistingProfiles() {
         .map(key => ({ profileName: existingProfiles[key].profileName, ...existingProfiles[key] }));
 }
 
-async function populateProfileDropdown(selectedProfileName = null) {
+
+export async function populateProfileDropdown(selectedProfileName = null) {
     const profiles = await getExistingProfiles();
     const profileSelectElement = document.getElementById('profileSelect');
 
     // Clear existing options
     profileSelectElement.innerHTML = '';
+
+    // Add "Unknown Profile" option if selectedProfileName is "Unknown Profile"
+    if (selectedProfileName === "Unknown Profile") {
+        const unknownOption = document.createElement('option');
+        unknownOption.value = "Unknown Profile";
+        unknownOption.textContent = "Unknown Profile";
+        unknownOption.selected = true;
+        profileSelectElement.appendChild(unknownOption);
+    }
 
     // Populate the dropdown with profiles
     profiles.forEach(profile => {
@@ -103,7 +190,6 @@ function groupHistoryByDate(historyEntries) {
 }
 
 
-
 async function fetchAndDisplayHistory() {
     try {
         // Fetch the current profile name based on the active tab's cookie store ID
@@ -128,7 +214,8 @@ async function fetchAndDisplayHistory() {
     }
 }
 
-async function displayProfileHistory(profileName) {
+
+export async function displayProfileHistory(profileName) {
     const dbName = profileName; // The database name for the profile
     const db = await openDatabase(dbName);
     const transaction = db.transaction('history', 'readonly');
@@ -136,6 +223,7 @@ async function displayProfileHistory(profileName) {
     const request = store.getAll();
 
     request.onsuccess = () => {
+        console.log(`Data loaded for profile: ${profileName}`, request.result);
         const groupedEntries = groupHistoryByDate(request.result);
         displayGroupedHistoryEntries(groupedEntries, profileName);
         db.close();
@@ -145,6 +233,7 @@ async function displayProfileHistory(profileName) {
         console.error("Error fetching history entries for profile", dbName + ":", event.target.error);
     };
 }
+
 
 function displayGroupedHistoryEntries(groupedEntries, profileName) {
     const historyEntriesContainer = document.getElementById('historyEntriesContainer');
@@ -250,11 +339,3 @@ function createHistoryEntryDiv(entry) {
     return div;
 }
 
-
-
-
-
-
-
-
-export { populateProfileDropdown, displayProfileHistory };

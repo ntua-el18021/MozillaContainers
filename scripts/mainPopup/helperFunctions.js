@@ -1,18 +1,3 @@
-/**
- * Contains helper functions used in mainPopup.js
- * ----------------------------------------------
- * - isNameExists
- * - displayError
- * - getExistingProfiles
- * - populateDeleteDropdown
- * - populateSwitchDropdown
- * - closeTabsForProfile
- * - executeProfileDeletion
- * - deleteIndexedDBHistory
- * ----------------------------------------------
- */
-import { handleSwitchProfile } from "./popup.js";
-
 // -------------- Mappings --------------
 const reversedIconMapping = {
     "fingerprint": { icon: "fingerprint", class: "material-icons" },
@@ -29,7 +14,7 @@ const reversedIconMapping = {
     "fence": { icon: "fence", class: "material-symbols-outlined" }
 };
 const colorsMapping = {
-    "blue": "#3498db",  // Removed the extra colon
+    "blue": "#3498db", 
     "turquoise": "#40E0D0",
     "green": "#2ecc71",
     "yellow": "#f1c40f",
@@ -70,22 +55,40 @@ const getExistingProfiles = async () => {
 // -------------- Error Functions --------------
 function displayExistingProfileError(message) {
     const errorMsg = document.getElementById('profileName');
-    errorMsg.placeholder = message;
-    setTimeout(() => {
-        errorMsg.placeholder= "Profile Name";
-    }, 6000);
+    if (errorMsg) {
+        errorMsg.placeholder = message;
+            setTimeout(() => {
+            errorMsg.placeholder = "Profile Name";
+        }, 6000);
+    } else {
+        console.error("Profile name input element not found in the DOM.");
+    }
 }
 function displayError(message) {
     console.log('Displaying error: ', message);
 }
 
 
-// ============= Populate Display =============
-const populateContainerList = async () => {
+// -------------- Switch Profile --------------
+const handleSwitchProfile = async (profileKey) => {
     const profiles = await getExistingProfiles();
-    const popupContainerList = document.getElementById('containerListId');
-    const containersListView = document.getElementById('containersListViewId');
-    const manageContainerList = document.getElementById('manageContainerListId');
+    if (profiles.length === 0) return displayError("No profiles to switch!");
+    if (!profileKey) return displayError("Please select a profile to switch.");
+    try {
+        await browser.tabs.create({
+            cookieStoreId: profiles.find(profile => profile.key === profileKey).cookieStoreId
+        });
+    } catch (error) {
+        console.error("Error switching profile:", error);
+        displayError("Failed to switch profile. Please try again.");
+    }
+};
+
+
+// -------------- Populate Container List --------------
+const populateContainerList = async (popupContainerList, containersListView, manageContainerList) => {
+
+    const profiles = await getExistingProfiles();
 
     popupContainerList.innerHTML = '';
     containersListView.innerHTML = '';
