@@ -1,6 +1,5 @@
-import {isNameExists, displayError,displayExistingProfileError, getExistingProfiles, executeProfileDeletion, populateContainerList, iconMapping} from './helperFunctions.js'
+import {handleGoToView, populateContainerList} from '../utilities/general.js'
 import {handleCreateProfile, handleEnterKeyForProfile, handleProfileCardFocusIn, handleProfileCardFocusOut, handleProfileCardClick} from '../utilities/createView.js'
-import {handleGoToView} from '../utilities/general.js'
 import {filterContainerList, handleSearchHistory, displayProfileHistory} from '../utilities/historyView.js'
 
 // Global Variables
@@ -103,7 +102,7 @@ function attachEventListeners() {
     // Create Profile View Listeners
     const profileNameInput = document.getElementById('profileName');
     if(profileNameInput){
-        profileNameInput.addEventListener('keydown', handleEnterKeyForProfile);
+        profileNameInput.addEventListener('keydown', (e) => handleEnterKeyForProfile(e, profileNameInput, popupContainerList, containersListView, manageContainerList));
     }
 
     const createProfileButton = document.getElementById('createProfileOkButton');

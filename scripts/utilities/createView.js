@@ -1,6 +1,26 @@
-import {isNameExists, displayExistingProfileError, iconMapping, populateContainerList} from '../mainPopup/helperFunctions.js';
+import {iconMapping, populateContainerList} from '../utilities/general.js';
 
 
+// Utility Functions
+async function isNameExists(name) {
+    const existingProfiles = await browser.storage.local.get();
+    return Object.values(existingProfiles).some(profile => profile.profileName === name);
+}
+
+function displayExistingProfileError(message) {
+    const errorMsg = document.getElementById('profileName');
+    if (errorMsg) {
+        errorMsg.placeholder = message;
+            setTimeout(() => {
+            errorMsg.placeholder = "Profile Name";
+        }, 6000);
+    } else {
+        console.error("Profile name input element not found in the DOM.");
+    }
+}
+
+
+// -------------- Create Profile --------------
 export const handleCreateProfile = async (profileNameInput, popupContainerList, containersListView, manageContainerList) => {
     if(!(profileNameInput || popupContainerList || containersListView || manageContainerList)){
         return;}
@@ -47,11 +67,11 @@ const resetSelections = () => {
     document.querySelectorAll('.iconGroup .icons .material-icons, .iconGroup .icons .material-symbols-outlined').forEach(el => el.classList.remove('selected'));
 };
 
-// --------------- Enter Key Handlers ---------------
-export const handleEnterKeyForProfile = (e) => {
+// --------------- Enter Key Handler ---------------
+export const handleEnterKeyForProfile = (e, profileNameInput, popupContainerList, containersListView, manageContainerList) => {
     if (e.key === "Enter") {
         e.preventDefault();
-        handleCreateProfile();
+        handleCreateProfile(profileNameInput, popupContainerList, containersListView, manageContainerList);
     }
 };
 
