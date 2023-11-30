@@ -2,6 +2,7 @@ import {handleGoToView, populateContainerList} from '../utilities/general.js'
 import {handleCreateProfile, handleEnterKeyForProfile, handleProfileCardFocusIn, handleProfileCardFocusOut, handleProfileCardClick} from '../utilities/createView.js'
 import {filterContainerList, handleSearchHistory, displayProfileHistory} from '../utilities/historyView.js'
 
+
 // Global Variables
 let openInSelectedProfile = false;
 let initialGroupStates = {};
@@ -51,14 +52,15 @@ function attachEventListeners() {
         goToHistoyView.addEventListener('click', () => handleGoToView("historyPageView"));
     }
 
+    const profileNameInput = document.getElementById('profileName');
     const goToProfileViewButton = document.getElementById('goToProfileView');
     if(goToProfileViewButton){
-        goToProfileViewButton.addEventListener('click', () => handleGoToView("createView"));
+        goToProfileViewButton.addEventListener('click', () => handleGoToView("createView", profileNameInput));
     }
 
     const goToCreateProfileManageProfiles = document.getElementById('manageCreateNewProfileId');
     if(goToCreateProfileManageProfiles){
-        goToCreateProfileManageProfiles.addEventListener('click', () => handleGoToView("createView"));
+        goToCreateProfileManageProfiles.addEventListener('click', () => handleGoToView("createView", profileNameInput));
     }
 
     // Main View Actions Listeners
@@ -100,14 +102,18 @@ function attachEventListeners() {
 
 
     // Create Profile View Listeners
-    const profileNameInput = document.getElementById('profileName');
-    if(profileNameInput){
-        profileNameInput.addEventListener('keydown', (e) => handleEnterKeyForProfile(e, profileNameInput, popupContainerList, containersListView, manageContainerList));
+    if(createView){
+        createView.addEventListener('keydown', (e) => handleEnterKeyForProfile(e, profileNameInput, popupContainerList, containersListView, manageContainerList));
     }
 
     const createProfileButton = document.getElementById('createProfileOkButton');
     if(createProfileButton){
         createProfileButton.addEventListener('click', () => handleCreateProfile(profileNameInput, popupContainerList, containersListView, manageContainerList));
+    }
+
+    const profileCancelButton = document.getElementById('createProfileCancelButton');
+    if(profileCancelButton){
+        profileCancelButton.addEventListener('click', () => handleGoToView("mainView"));
     }
 
     const profileCardQuerySelector = document.querySelector('.profile-card');
@@ -133,7 +139,6 @@ function attachEventListeners() {
     if(profileSelectElement){
         profileSelectElement.addEventListener('change', async (event) => {
             const selectedProfileName = event.target.value;
-            console.log('selectedProfileName: ', selectedProfileName);
             await displayProfileHistory(selectedProfileName);
         });
     }
@@ -172,7 +177,11 @@ function attachEventListeners() {
             document.getElementById('toggleOpenInProfile').textContent = openInSelectedProfile ? "Open in Selected Profile" : "Open in Current Profile";
         });
     }
-   
+
+    // document.addEventListener('DOMContentLoaded', function() {
+    //     checkForDeferredActions();
+    // });
+
 }
 
 

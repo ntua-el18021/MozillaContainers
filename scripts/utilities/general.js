@@ -1,13 +1,15 @@
 import {views} from '../mainPopup/popup.js';
 import {profileForHistory} from '../utilities/historyView.js';
+import {resetSelections} from '../utilities/createView.js';
 
 
 // Change Views
-export async function handleGoToView(viewToShow) {
-    if (viewToShow === "historyPageView") {
-        console.log('Loading history view...');
+export async function handleGoToView(viewToShow, profileNameInput=null) {
+    if (viewToShow === "createView") {
+        resetSelections(profileNameInput);
+    }
+    else if (viewToShow === "historyPageView") {
         await profileForHistory();
-        console.log('History view loaded');
     }
     // Iterate over each view
     Object.entries(views).forEach(([key, view]) => {

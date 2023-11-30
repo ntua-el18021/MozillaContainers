@@ -1,4 +1,4 @@
-import {iconMapping, populateContainerList} from '../utilities/general.js';
+import {handleGoToView, iconMapping, populateContainerList} from '../utilities/general.js';
 
 
 // Utility Functions
@@ -53,19 +53,24 @@ export const handleCreateProfile = async (profileNameInput, popupContainerList, 
         icon: containerIcon         
     });
     if (response) {
-        // populateDeleteDropdown();
         populateContainerList(popupContainerList, containersListView, manageContainerList);
+        handleGoToView("mainView");
     }
-    console.log('profile created: ', response, ' with name: ', profileName, ' color: ', selectedColor, ' icon: ', selectedIcon);
-    resetSelections();
+    // console.log('profile created: ', response, ' with name: ', profileName, ' color: ', selectedColor, ' icon: ', selectedIcon);
+    resetSelections(profileNameInput);
 }
 
-const resetSelections = () => {
+export const resetSelections = async (profileNameInput) => {
+    if (profileNameInput) {
+        profileNameInput.value = '';
+        profileNameInput.placeholder = "Profile Name"; // Reset placeholder if needed
+    }
     // Deselect colors
     document.querySelectorAll('.colorGroup .colors .colorBehind').forEach(el => el.classList.remove('selected'));
     // Deselect icons
     document.querySelectorAll('.iconGroup .icons .material-icons, .iconGroup .icons .material-symbols-outlined').forEach(el => el.classList.remove('selected'));
 };
+
 
 // --------------- Enter Key Handler ---------------
 export const handleEnterKeyForProfile = (e, profileNameInput, popupContainerList, containersListView, manageContainerList) => {

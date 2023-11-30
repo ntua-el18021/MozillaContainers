@@ -1,15 +1,12 @@
 import {initialGroupStates, openInSelectedProfile} from '../mainPopup/popup.js';
-
+// import {openDatabase} from '../background.js';
 
 export  async function profileForHistory() {
     const [currentTab] = await browser.tabs.query({ active: true, currentWindow: true });
-    console.log('currentTab: ', currentTab);
     let profileName = "Unknown Profile";
     if (currentTab) {
         const storedData = await browser.storage.local.get(currentTab.cookieStoreId);
-        console.log('storedData: ', storedData);
         profileName = storedData[currentTab.cookieStoreId]?.profileName || "Unknown Profile";
-        console.log('profileName: ', profileName);
     }
 
     await populateProfileDropdown(profileName);
@@ -107,8 +104,9 @@ export async function populateProfileDropdown(selectedProfileName = null) {
     if (selectedProfileName === "Unknown Profile") {
         const unknownOption = document.createElement('option');
         unknownOption.value = "Unknown Profile";
-        unknownOption.textContent = "Unknown Profile";
+        unknownOption.textContent = "Select a Profile...";
         unknownOption.selected = true;
+        unknownOption.disabled = true;
         profileSelectElement.appendChild(unknownOption);
     }
 
@@ -223,7 +221,6 @@ export async function displayProfileHistory(profileName) {
     const request = store.getAll();
 
     request.onsuccess = () => {
-        console.log(`Data loaded for profile: ${profileName}`, request.result);
         const groupedEntries = groupHistoryByDate(request.result);
         displayGroupedHistoryEntries(groupedEntries, profileName);
         db.close();

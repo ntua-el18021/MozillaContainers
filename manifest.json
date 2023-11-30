@@ -9,7 +9,8 @@
     "tabs",
     "contextualIdentities",
     "activeTab",
-    "webNavigation"
+    "webNavigation", 
+    "commands"
   ],
 
   "action": {
@@ -28,20 +29,15 @@
   "background": {
     "scripts": ["scripts/background.js"]
   },
-  "commands": {
-    "open_history": {
-        "suggested_key": {
-            "default": "Ctrl+Shift+U"
-        },
-        "description": "Open Profile History"
-    }
-  },
-
 
   "web_accessible_resources": [
     {
-      "resources": ["views/history.html", "views/profile.html", "scripts/profilePopup/profilePopup.js", "scripts/historyPopup/historyPopup.js", "./scripts/profilePopup/profilePopup.js", "./scripts/mainPopup/helperFunctions.js"],
-      "matches": ["<all_urls>"]
+      "resources": ["scripts/mainPopup/popup.js", "scripts/utilities/createView.js",
+        "scripts/utilities/general.js", "scripts/utilities/historyView.js",
+        "scripts/utilities/manageView.js", "scripts/background.js"
+      ],
+    "matches": ["<all_urls>"]
+    
     }
   ]
   

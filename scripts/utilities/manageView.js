@@ -27,7 +27,7 @@ const deleteIndexedDBHistory = async (profile) => {
     return new Promise((resolve, reject) => {
         const request = indexedDB.deleteDatabase(dbName);
         request.onsuccess = () => {
-            console.log(`IndexedDB database '${dbName}' deleted successfully.`);
+            // console.log(`IndexedDB database '${dbName}' deleted successfully.`);
             resolve();
         };
         request.onerror = () => {
@@ -59,7 +59,7 @@ const executeProfileDeletion = async (selectedProfileKey, profiles) => {
             await browser.storage.local.remove(selectedProfileKey);
         }
 
-        console.log("Profile(s) deleted successfully!");
+        // console.log("Profile(s) deleted successfully!");
     } catch (error) {
         console.error("Error deleting profile:", error);
         displayError("Failed to delete profile(s). Please try again.");
